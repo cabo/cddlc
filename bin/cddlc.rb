@@ -11,17 +11,22 @@ require 'optparse'
 require 'ostruct'
 
 $options = OpenStruct.new
-op = OptionParser.new do |opts|
-  opts.banner = "Usage: cddlc.rb [options] file.cddl"
+begin
+  op = OptionParser.new do |opts|
+    opts.banner = "Usage: cddlc.rb [options] file.cddl"
 
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
-    $options.verbose = v
+    opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+      $options.verbose = v
+    end
+    opts.on("-tFMT", "--to=FMT", [:neat, :json, :yaml], "Target format") do |v|
+      $options.target = v
+    end
   end
-  opts.on("-tFMT", "--to=FMT", "Target format") do |v|
-    $options.target = v
-  end
+  op.parse!
+rescue Exception => e
+  warn e
+  exit 1
 end
-op.parse!
 
 case ARGV.size
 when 1
@@ -38,16 +43,15 @@ if ast
 #  puts ast.to_yaml
   result = ast.ast
   case $options.target
-  when "json"
+  when :json, nil
     pp result
-  when "neat", nil
+  when :neat
     require 'neatjson'
     puts JSON.neat_generate(result, after_comma: 1, after_colon: 1)
-  when "yaml"
+  when :yaml
     puts result.to_yaml
   else
     warn ["Unknown target format: ", $options.target].inspect
-    
   end
 else
   warn parser.failure_reason
