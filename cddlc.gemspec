@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.license = "MIT"
   s.homepage = "http://github.com/cabo/cddlc"
   s.files = Dir['lib/**/*.rb'] + %w(cddlc.gemspec) + Dir['bin/**/*.rb']
-  s.executables = Dir['bin/**/*.rb'].map {|x| File.basename(x)}
+  s.executables = Dir['bin/*'].map {|x| File.basename(x)}
   s.required_ruby_version = '>= 1.9.2'
 
   s.require_paths = ["lib"]

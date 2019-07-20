@@ -28,16 +28,13 @@ rescue Exception => e
   exit 1
 end
 
-case ARGV.size
-when 1
-  fn = ARGV[0]
-else
+if ARGV == []
   puts op
   exit 1
 end
+cddl_file = ARGF.read
 
 parser = CDDLParser.new
-cddl_file = File.read(fn)
 ast = parser.parse cddl_file
 if ast
 #  puts ast.to_yaml
