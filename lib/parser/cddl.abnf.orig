@@ -36,9 +36,9 @@ group = grpchoice *(S "//" S grpchoice)
 
 grpchoice = *(grpent optcom)
 
-grpent = [occur S] [memberkey S] type
-       / [occur S] groupname [genericarg]  ; preempted by above
-       / [occur S] "(" S group S ")"
+grpent = [occurs] [memberkey S] type
+       / [occurs] groupname [genericarg]  ; preempted by above
+       / [occurs] "(" S group S ")"
 
 memberkey = type1 S ["^" S] "=>"
           / bareword S ":"
@@ -47,6 +47,8 @@ memberkey = type1 S ["^" S] "=>"
 bareword = id
 
 optcom = S ["," S]
+
+occurs = occur S
 
 occur = [uint] "*" [uint]
       / "+"

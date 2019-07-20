@@ -75,9 +75,9 @@ grpchoice = *(grpent optcom) {
     end
 }
 
-grpent = [occur S] [memberkey S] type { def ast() repwrap(elements[0], ["mem", elements[1].elements ? elements[1].memberkey.ast : nil, elements[2].ast]) end}
-       / [occur S] groupname [genericarg]  ; preempted by above
-       / [occur S] "(" S group S ")" { def ast() repwrap(elements[0], group.ast()) end}
+grpent = [occurs] [memberkey S] type { def ast() repwrap(elements[0], ["mem", elements[1].elements ? elements[1].memberkey.ast : nil, elements[2].ast]) end}
+       / [occurs] groupname [genericarg]  ; preempted by above
+       / [occurs] "(" S group S ")" { def ast() repwrap(elements[0], group.ast()) end}
 
 memberkey = type1 S ["^" S] "=>" { def ast() type1.ast end}
           / bareword S ":" { def ast() ["text", bareword.text_value] end}
@@ -87,8 +87,10 @@ bareword = id
 
 optcom = S ["," S]
 
-occur = [uint] "*" [uint] {def ast() [tvtoi(elements[0], 0), tvtoi(elements[2], Float::Infinity)] end}
-      / "+" {def ast() [1, Float::Infinity] end}
+occurs = occur S {def ast() elements[0].ast end}
+
+occur = [uint] "*" [uint] {def ast() [tvtoi(elements[0], 0), tvtoi(elements[2], false)] end}
+      / "+" {def ast() [1, false] end}
       / "?" {def ast() [0, 1] end}
 
 uint = DIGIT1 *DIGIT

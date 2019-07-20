@@ -12,16 +12,13 @@ require 'ostruct'
 
 $options = OpenStruct.new
 op = OptionParser.new do |opts|
-  opts.banner = "Usage: kdrfc [options] file.md|file.mkd|file.xml"
+  opts.banner = "Usage: cddlc.rb [options] file.cddl"
 
   opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
     $options.verbose = v
   end
-  opts.on("-r", "--[no-]remote", "Run xml2rfc remotely even if there is a local one") do |v|
-    $options.remote = v
-  end
-  opts.on("-x", "--[no-]xml", "Convert to xml only") do |v|
-    $options.xml_only = v
+  opts.on("-tFMT", "--to=FMT", "Target format") do |v|
+    $options.target = v
   end
 end
 op.parse!
@@ -39,8 +36,19 @@ cddl_file = File.read(fn)
 ast = parser.parse cddl_file
 if ast
 #  puts ast.to_yaml
-  pp ast.ast
-  puts ast.ast.to_yaml
+  result = ast.ast
+  case $options.target
+  when "json"
+    pp result
+  when "neat", nil
+    require 'neatjson'
+    puts JSON.neat_generate(result, after_comma: 1, after_colon: 1)
+  when "yaml"
+    puts result.to_yaml
+  else
+    warn ["Unknown target format: ", $options.target].inspect
+    
+  end
 else
   warn parser.failure_reason
   parser.failure_reason =~ /^(Expected .+) after/m
