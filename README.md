@@ -19,7 +19,7 @@ cddlc knows the following formats:
 
 [RFC8610]: http://tools.ietf.org/html/rfc8610
 
-Tnese targets are identified by `-t cddl`, `-t json` (with `-t neat` invoking
+These targets are identified by `-t cddl`, `-t json` (with `-t neat` invoking
 a different prettyprinter), `-t yaml`.  These can be abbreviated (but
 don't do that in scripts).
 
@@ -32,5 +32,5 @@ JSON/YAML formats of CDDL.
 * `cddlc -tyaml foo.cddl > foo.cddly`
 * `cddlc -ty foo.cddl > foo.cddly`
 
-Output is to stdout, input from a file given as a command line
-argument.
+Output is to stdout, input from one or more files given as command line
+arguments (use `-` for standard input).
