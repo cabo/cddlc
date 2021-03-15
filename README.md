@@ -3,7 +3,7 @@
 This little set of tools provides a number of command line utilities
 for converting to and from [cddl][RFC8610].
 
-[![0.0.1](https://badge.fury.io/rb/cddlc.svg)](http://badge.fury.io/rb/cddlc)
+[![0.0.2](https://badge.fury.io/rb/cddlc.svg)](http://badge.fury.io/rb/cddlc)
 
 ## Installation
 
@@ -23,8 +23,11 @@ These targets are identified by `-t cddl`, `-t json` (with `-t neat` invoking
 a different prettyprinter), `-t yaml`.  These can be abbreviated (but
 don't do that in scripts).
 
-The current version only can transform from input CDDL to one of the
-JSON/YAML formats of CDDL.
+With `-t enum`, cddlc generates C-style enumeration type declarations
+from integer keys used in a map.
+
+Apart from creating enum declarations, the current version only can
+transform from input CDDL to one of the JSON/YAML formats of CDDL.
 
 ## Command line utilities
 
