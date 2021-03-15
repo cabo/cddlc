@@ -1,15 +1,15 @@
 task :default => :build
 
-task :build => "lib/parser/cddl.rb" do
+task :build => "lib/parser/cddlgrammar.rb" do
   sh "gem build cddlc.gemspec"
 end
 
-file "lib/parser/cddl.rb" => "lib/parser/cddl.treetop" do
-  sh 'LANG="en_US.utf-8" tt lib/parser/cddl.treetop'
+file "lib/parser/cddlgrammar.rb" => "lib/parser/cddlgrammar.treetop" do
+  sh 'LANG="en_US.utf-8" tt lib/parser/cddlgrammar.treetop'
 end
 
-file "lib/parser/cddl.treetop" => "lib/parser/cddl.abnftt" do
-  sh "abnftt lib/parser/cddl.abnftt"
-  sh "diff lib/parser/cddl.abnf lib/parser/cddl.abnf.orig"
+file "lib/parser/cddlgrammar.treetop" => "lib/parser/cddlgrammar.abnftt" do
+  sh "abnftt lib/parser/cddlgrammar.abnftt"
+  sh "diff lib/parser/cddlgrammar.abnf lib/parser/cddl.abnf.orig"
 end
 

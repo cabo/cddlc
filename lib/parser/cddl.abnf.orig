@@ -1,4 +1,4 @@
-cddl = S 1*(rule S)
+cddlgrammar = S 1*(rule S)
 rule = typename [genericparm] S assignt S type
      / groupname [genericparm] S assigng S grpent
 

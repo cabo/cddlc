@@ -1,5 +1,5 @@
 
-require_relative './cddl'
+require_relative './cddlgrammar'
 
 class Treetop::Runtime::SyntaxNode
   def ast
