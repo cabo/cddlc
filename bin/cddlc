@@ -6,6 +6,37 @@ require 'json'
 
 require_relative '../lib/cddlc.rb'
 
+def named_keys(tree)
+  # warn [:T, tree].inspect
+  fail unless Array === tree
+  case tree[0]
+  when "seq", "gcho", "tcho"
+    tree[1..-1].flat_map {|x| named_keys(x)}
+  when "rep"
+    named_keys(tree[3])
+  when "mem"
+    key = tree[1]
+    if Array === key && key[0] == "name"
+      [key[1]]
+    end
+  end || []
+end
+
+def integer_value(tree)
+  tree and (
+    fail tree.inspect unless Array === tree
+    case tree[0]
+    when "number"
+      tree[1]
+      # XXX: could add other cases
+    end
+  )
+end
+
+def snaky(name)
+  name.gsub(/-/, "_")
+end
+ 
 Encoding.default_external = Encoding::UTF_8
 require 'optparse'
 require 'ostruct'
@@ -21,7 +52,7 @@ begin
     opts.on("-r", "--[no-]rules", "Process rules") do |v|
       $options.rules = v
     end
-    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml], "Target format") do |v|
+    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :enum], "Target format") do |v|
       $options.target = v
     end
   end
@@ -52,6 +83,23 @@ when :neat, :json
   puts JSON.neat_generate(result, after_comma: 1, after_colon: 1)
 when :yaml
   puts result.to_yaml
+when :enum
+  rules = cddl.rules
+  rules.each do |k, v|
+    if v[0] == "map"
+      nk = v[1..-1].flat_map {|e| named_keys(e)}
+      # warn [:NK, k, nk].inspect
+      nk = nk.map {|name| i = integer_value(rules[name]); [name, i] if i}.compact
+      # warn [:NK, k, nk].inspect
+      if nk != []
+        puts "enum #{snaky(k).downcase}_keys {"
+        nk.each do |n, v|
+          puts "  #{snaky(n).upcase} = #{v},"
+        end
+        puts "};"
+      end
+    end
+  end
 else
   warn ["Unknown target format: ", $options.target].inspect
 end
