@@ -4,7 +4,7 @@ require 'yaml'
 require 'treetop'
 require 'json'
 
-require_relative '../lib/parser/cddl-util.rb'
+require_relative '../lib/cddlc.rb'
 
 Encoding.default_external = Encoding::UTF_8
 require 'optparse'
@@ -18,7 +18,10 @@ begin
     opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
       $options.verbose = v
     end
-    opts.on("-tFMT", "--to=FMT", [:neat, :json, :yaml], "Target format") do |v|
+    opts.on("-r", "--[no-]rules", "Process rules") do |v|
+      $options.rules = v
+    end
+    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml], "Target format") do |v|
       $options.target = v
     end
   end
@@ -34,26 +37,21 @@ if ARGV == []
 end
 cddl_file = ARGF.read
 
-parser = CDDLParser.new
-ast = parser.parse cddl_file
-if ast
-#  puts ast.to_yaml
-  result = ast.ast
-  case $options.target
-  when :json, nil
-    pp result
-  when :neat
-    require 'neatjson'
-    puts JSON.neat_generate(result, after_comma: 1, after_colon: 1)
-  when :yaml
-    puts result.to_yaml
-  else
-    warn ["Unknown target format: ", $options.target].inspect
-  end
+cddl = CDDL.from_cddl(cddl_file)
+result = if $options.rules
+           cddl.rules
+         else
+           cddl.tree
+         end
+
+case $options.target
+when :basic, nil
+  pp result
+when :neat, :json
+  require 'neatjson'
+  puts JSON.neat_generate(result, after_comma: 1, after_colon: 1)
+when :yaml
+  puts result.to_yaml
 else
-  warn parser.failure_reason
-  parser.failure_reason =~ /^(Expected .+) after/m
-  warn "#{$1.gsub("\n", '<<<NEWLINE>>>')}:"
-  warn cddl_file.lines.to_a[parser.failure_line - 1]
-  warn "#{'~' * (parser.failure_column - 1)}^"
+  warn ["Unknown target format: ", $options.target].inspect
 end
