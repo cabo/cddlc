@@ -74,8 +74,9 @@ exponent = ["+"/"-"] 1*DIGIT
 text = %x22 *SCHAR %x22
 SCHAR = %x20-21 / %x23-5B / %x5D-7E / %x80-10FFFD / SESC
 
-SESC = "\" ( %x22 / %x2F / %x5C / %x62 / %x66 / %x6E / %x72 / %x74 /
-             (%x75 hexchar) )
+SESC = "\" ( %x22 / "/" / "\" /                 ; \" \/ \\
+             %x62 / %x66 / %x6E / %x72 / %x74 / ; \b \f \n \r \t
+             (%x75 hexchar) )                   ; \u
 
 hexchar = non-surrogate / (high-surrogate "\" %x75 low-surrogate)
 non-surrogate = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /

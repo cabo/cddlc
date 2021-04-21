@@ -117,9 +117,10 @@ SCHAR = %x20-21 {def ast() text_value end
           }/ %x80-10FFFD {def ast() text_value end
           }/ SESC
 
-SESC = "\" ( %x22 / %x2F / %x5C / %x62 / %x66 / %x6E / %x72 / %x74 /
-             (%x75 hexchar) ) {def ast() JSON.load("\"\\#{elements[1].text_value}\"") end}
-
+SESC = "\" ( %x22 / "/" / "\" /                 ; \" \/ \\
+             %x62 / %x66 / %x6E / %x72 / %x74 / ; \b \f \n \r \t
+             (%x75 hexchar) )                   ; \uXXXX
+             {def ast() JSON.load("\"\\#{elements[1].text_value}\"") end}
 hexchar = non-surrogate / (high-surrogate "\" %x75 low-surrogate)
 non-surrogate = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /
                 ("D" %x30-37 2HEXDIG )
