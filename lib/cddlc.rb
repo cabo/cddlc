@@ -50,8 +50,8 @@ class CDDL
           fail name
         end
         @rules[name] =
-          if old = @rules[name]
-            fail "duplicate rule for name #{name}" unless cho
+          if (old = @rules[name]) && old != val
+            fail "duplicate rule for name #{name} #{old.inspect} #{val.inspect}" unless cho
             if Array === old && old[0] == cho
               old.dup << val
             else
