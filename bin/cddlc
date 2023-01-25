@@ -52,7 +52,13 @@ begin
     opts.on("-r", "--[no-]rules", "Process rules") do |v|
       $options.rules = v
     end
-    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :enum], "Target format") do |v|
+    opts.on("-x", "--[no-]expand", "Expand generics") do |v|
+      $options.expand_generics = v
+    end
+    opts.on("-u", "--[no-]undefined", "Note undefined names") do |v|
+      $options.note_undefined = v
+    end
+    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :enum, :cddl], "Target format") do |v|
       $options.target = v
     end
   end
@@ -70,10 +76,17 @@ cddl_file = ARGF.read
 
 cddl = CDDL.from_cddl(cddl_file)
 result = if $options.rules
+           if $options.expand_generics
+             require_relative "../lib/processor/cddl-expander.rb"
+             cddl.expand_generics
+           end
            cddl.rules
          else
+           warn "** can't expand in tree; use -r flag as well" if $options.expand_generics
            cddl.tree
          end
+
+warn "** can't note undefined for target != cddl" if $options.note_undefined && $options.target != :cddl
 
 case $options.target
 when :basic, nil
@@ -100,6 +113,38 @@ when :enum
       end
     end
   end
+when :cddl
+  require_relative '../lib/writer/cddl-writer.rb'
+  if $options.note_undefined
+    require_relative "../lib/processor/cddl-visitor.rb"
+    used = {}
+    gen_used = {}
+    def_gen = {}
+    cddl.rules.each do |k, v|
+      def_gen[k[0]] = true if Array === k
+      cddl.visit(v) do |p, &block|
+        case p
+        in ["gen", name, *_gen_args]
+          gen_used[name] = true
+        in ["name", name]
+          used[name] = true
+        else
+          false
+        end
+      end
+    end
+    used.each do |k, v|
+      unless cddl.rules[k] || cddl.prelude.rules[k]
+        puts ";;; *** undefined: #{k}"
+      end
+    end
+    gen_used.each do |k, v|
+      unless def_gen[k]
+        puts ";;; *** undefined: #{k}<>"
+      end
+    end
+  end
+  puts cddl.to_s
 else
   warn ["Unknown target format: ", $options.target].inspect
 end
