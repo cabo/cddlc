@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.email = "cabo@tzi.org"
   s.license = "MIT"
   s.homepage = "http://github.com/cabo/cddlc"
-  s.files = Dir['lib/**/*.rb'] + %w(cddlc.gemspec data/prelude.cddl) + Dir['bin/**/*.rb']
+  s.files = Dir['lib/**/*.rb'] + %w(cddlc.gemspec) + Dir['data/*.cddl'] + Dir['bin/**/*.rb']
   s.executables = Dir['bin/*'].map {|x| File.basename(x)}
   s.required_ruby_version = '>= 1.9.2'
 

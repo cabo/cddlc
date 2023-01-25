@@ -66,9 +66,12 @@ class CDDL
     @rules
   end
 
+  DATA_DIR = Pathname.new(__FILE__) + "../../data/"
+
   def prelude
     if @prelude.nil?
-      @prelude = CDDL.from_cddl(File.read(Pathname.new(__FILE__) + "../../data/prelude.cddl"))
+      @prelude = CDDL.from_cddl(File.read(DATA_DIR + "prelude.cddl"))
+
     end
     @prelude
   end
