@@ -58,6 +58,9 @@ begin
     opts.on("-u", "--[no-]undefined", "Note undefined names") do |v|
       $options.note_undefined = v
     end
+    opts.on("-2", "--[no-]cddl2", "Perform some CDDL 2.0 processing") do |v|
+      $options.cddl2 = v
+    end
     opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :enum, :cddl], "Target format") do |v|
       $options.target = v
     end
@@ -87,6 +90,46 @@ result = if $options.rules
          end
 
 warn "** can't note undefined for target != cddl" if $options.note_undefined && $options.target != :cddl
+
+if $options.cddl2
+  require_relative '../lib/processor/cddl-undefined.rb'
+  directives = cddl_file.lines.grep(/^;# /).map(&:chomp).map{|l| l.sub(/^;#\s+/, '')}
+  # puts "** Directives: <<"
+  # puts directives
+  directives.each do |di|
+    case di
+    when /\Ainclude\s+([-._a-zA-Z0-9]+)(?:\s+as\s+([-._a-zA-Z0-9]+))?\s*\z/
+      docref = $1
+      explicit_preferred_tag = $2
+      preferred_tag = explicit_preferred_tag || docref
+      puts "PREFERRED_TAG #{preferred_tag}" if $options.verbose
+      puts "DOCREF #{docref}" if $options.verbose
+      fn = docref.downcase << ".cddl"
+      io = File.open(fn) rescue File.open(CDDL::DATA_DIR + fn) # XXX CDDL_PATH
+      include_file = io.read
+      # XXX: processing directives recursively!
+      included_cddl = CDDL.from_cddl(include_file)
+      # XXX: Should namespace that thing now! all names -> preferred_tag.name
+      p included_cddl.rules.keys
+      # XXX: do once, first, to rename COSE_Key to RFC9052.COSE_Key
+      loop do
+        undef_rule, _undef_gen = cddl.cddl_undefined # ignore undef_gen for now
+        # p undef_rule
+        got_more = false
+        undef_rule.each do |name|
+          if rule = included_cddl.rules[name]
+            cddl.rules[name] = rule                     # XXX must be namespaced!
+            puts "IMPORTED #{name} from #{fn}" # ...: #{rule}... if $options.verbose
+            got_more = true
+          end
+        end
+        break unless got_more
+      end
+    else
+      warn "** unknown directive '#{di}' ignored"
+    end
+  end
+end
 
 case $options.target
 when :basic, nil
