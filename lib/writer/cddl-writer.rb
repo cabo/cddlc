@@ -46,11 +46,12 @@ class CDDL
     in ["gcho", *groups]
       [0, groups.map{write_rhs(_1, 2, indent, pn)}.join(" // ")]
     in ["op", op, l, r]
-      [3, "#{write_rhs(l, 3, indent, pn)} #{op} #{write_rhs(r, 3, indent, pn)}"]
+      [3, "#{write_rhs(l, 4, indent, pn)} #{op} #{write_rhs(r, 4, indent, pn)}"]
+      # 3->4: work around cddl tool limitation
     in ["map", group]
-      [4, "{#{write_rhs(group, 0, indent, pn)}}"]
+      [3, "{#{write_rhs(group, 0, indent, pn)}}"] # 4->3: work around cddl tool limitation
     in ["ary", group]
-      [4, "[#{write_rhs(group, 0, indent, pn)}]"]
+      [3, "[#{write_rhs(group, 0, indent, pn)}]"] # 4->3: work around cddl tool limitation
     in ["unwrap", namep]
       [4, "~#{write_rhs(namep, 4, indent, pn)}"]
     in ["enum", ["name", _name] => namep]
@@ -90,7 +91,8 @@ class CDDL
     in ["mem", nil, t2]
       [2, write_rhs(t2, 2, indent, pn)]
     in ["mem", t1, t2]
-      [2, "#{write_rhs(t1, 2, indent, pn)} => #{write_rhs(t2, 2, indent, pn)}"]
+      [2, "#{write_rhs(t1, 3, indent, pn)} => #{write_rhs(t2, 2, indent, pn)}"]
+      # 2->3: work around cddl tool limitation
     in ["text", t]
       [4, "\"#{t}\""]              # XXX escape
     in ["number", t]
