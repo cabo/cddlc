@@ -1,4 +1,6 @@
 require_relative "parser/cddl-util.rb"
+require_relative "processor/cddl-visitor.rb"
+require_relative 'processor/cddl-undefined.rb'
 
 class CDDL
   @@parser = CDDLGRAMMARParser.new
@@ -22,6 +24,21 @@ class CDDL
     reason.join("\n")
   end
 
+  # (keeps only renamed rules)
+  def rename(rename_map)
+    rules.replace(
+      Hash[rename_map.map do |o, n|
+             [n, visit(rules[o]) do |prod|
+                case prod
+                in ["name", *] | ["gen", *]
+                  prod[1] = rename_map[prod[1]] || prod[1]
+                else
+                end
+                false
+              end]
+           end])
+  end
+
   SAFE_FN = /\A[-._a-zA-Z0-9]+\z/
 
   def self.from_cddl(s)
@@ -41,8 +58,8 @@ class CDDL
         case di
         in ["include" => dir, docref]
         in ["include" => dir, docref, "as", preferred_tag]
-          warn "** Ignoring namespace tag #{preferred_tag} for now"
         in ["import" => dir, docref]
+        in ["import" => dir, docref, "as", preferred_tag]
         else
           warn "** Can't parse include directive #{di.inspect}"
           next
@@ -71,25 +88,38 @@ class CDDL
 
         include_file = io.read
         included_cddl = CDDL.from_cddl(include_file)
-        # XXX: Should namespace that thing now! all names -> preferred_tag.name
-        # p included_cddl.rules.keys
-        # XXX: do once, first, to rename COSE_Key to RFC9052.COSE_Key
+        if preferred_tag
+          included_cddl = included_cddl.deep_clone # needed?
+          renamed_names = included_cddl.rules.keys
+          name_rename = Hash[
+            renamed_names.map { |o|
+              n = "#{preferred_tag}.#{o}"
+              warn "** Warning: renamed name #{n} already in #{fn}" if included_cddl.rules[n]
+              [o, n]}]
+          included_cddl.rename(name_rename)
+        end
+
         case dir
         in "import"
           warn "** IMPORTING #{fn}" if $options.verbose
-          require_relative '../lib/processor/cddl-undefined.rb'
+          undef_rule = nil
           loop do
             undef_rule = ret.cddl_undefined # XXX square...
             # p undef_rule
             got_more = false
             undef_rule.each do |name|
               if rule = included_cddl.rules[name]
-                ret.rules[name] = rule                     # XXX must be namespaced!
-                warn "IMPORTED #{name} from #{fn}" if $options.verbose # ...: #{rule}...
+                ret.rules[name] = rule
+                warn "IMPORTED #{name} from #{fn}" if $options.verbose
                 got_more = true
               end
             end
             break unless got_more
+          end
+          if preferred_tag
+            undef_rule.each do |name|
+              warn "** Warning: undefined reference #{name} without namespace prefix is defined in namespaced imported module #{fn}" if name_rename[name]
+            end
           end
         in "include"
           warn "** INCLUDING #{fn}" if $options.verbose
@@ -137,7 +167,6 @@ class CDDL
           fail unless name.size == 2
           name = name[1]
         when "gen"
-          require_relative "processor/cddl-visitor.rb"
           parmnames = name[2..-1]
           name = name[1]        # XXX update val with parm/arg
           val = ["parm", parmnames,
