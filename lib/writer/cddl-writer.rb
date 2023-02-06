@@ -93,8 +93,10 @@ class CDDL
     in ["mem", t1, t2]
       [2, "#{write_rhs(t1, 3, indent, pn)} => #{write_rhs(t2, 2, indent, pn)}"]
       # 2->3: work around cddl tool limitation
+    in ["bytes", t]
+      [4, t]                    # XXX not very clean
     in ["text", t]
-      [4, "\"#{t}\""]              # XXX escape
+      [4, "\"#{t}\""]           # XXX escape
     in ["number", t]
       [4, t.to_s]
     end
