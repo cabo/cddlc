@@ -1,9 +1,9 @@
 
 COSE_Hash_V = (
-    1 : int / tstr, # Algorithm identifier
-    2 : bstr, # Hash value
-    ? 3 : tstr, # Location of object that was hashed
-    ? 4 : any   # object containing other details and things
+    1 : int / tstr, ; Algorithm identifier
+    2 : bstr, ; Hash value
+    ? 3 : tstr, ; Location of object that was hashed
+    ? 4 : any   ; object containing other details and things
     )
 
 
