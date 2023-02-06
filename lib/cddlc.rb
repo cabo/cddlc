@@ -137,7 +137,20 @@ class CDDL
           fail unless name.size == 2
           name = name[1]
         when "gen"
-          name = name[1..-1]
+          require_relative "processor/cddl-visitor.rb"
+          parmnames = name[2..-1]
+          name = name[1]        # XXX update val with parm/arg
+          val = ["parm", parmnames,
+                 visit(val) do |p|
+                   case p
+                   in ["name", nm]
+                     if ix = parmnames.index(nm)
+                       [true, ["arg", ix]]
+                     end
+                   else
+                     false
+                   end
+                 end]
         else
           fail name
         end

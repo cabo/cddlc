@@ -11,6 +11,8 @@ class CDDL
     end
 
     case prod
+    in ["parm", parmnames, prod]
+      ["parm", parmnames, visit(prod, &block)]
     in ["gen", name, *types]
       ["gen", name, *visit_all(types, &block)]
     in ["op", op, *prods]

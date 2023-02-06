@@ -2,14 +2,13 @@ require_relative "../cddlc.rb"
 require_relative "./cddl-visitor.rb"
 
 class CDDL
-  def substitute(prod, parms, args, &block)
-    subs = Hash[parms.zip(args)]
+  def substitute(prod, parms, subs, &block)
     visit(prod) do |p, &block1|
       case p
-      in ["gen", name, *gen_args]
+      in ["gen", name, *gen_args] # XXX
         [true, gen_apply(name, gen_args, &block1)]
-      in ["name", name]
-        if replacement = subs[name]
+      in ["arg", num]
+        if replacement = subs[num]
           [true, visit(expand_prod(replacement), &block)]
         end
       else
@@ -35,15 +34,19 @@ class CDDL
   def expand_generics
     @gen = {}
     rules.each do |name, prod|
-      if Array === name
-        @gen[name[0]] = [name[1..-1], prod]
+      case prod
+      in ["parm", parmnames, type]
+        if prod[0] == "parm"
+          @gen[name] = [parmnames, type]
+        end
+      else
       end
     end
     p @gen if $options.verbose
     @gen.each do |k, v|
-      namep = v[0]
-      fail unless rules[[k, *namep]] == v[1]
-      rules.delete([k, *namep])
+      parmnames = v[0]
+      fail unless rules[k] == ["parm", parmnames, v[1]]
+      rules.delete(k)
     end
     @new_rules = {}
     rules.each do |name, prod|
