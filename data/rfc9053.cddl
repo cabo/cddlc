@@ -1,10 +1,4 @@
 
-PartyInfo = (
-    identity : bstr / nil,
-    nonce : bstr / int / nil,
-    other : bstr / nil
-)
-
 COSE_KDF_Context = [
     AlgorithmID : int / tstr,
     PartyUInfo : [ PartyInfo ],
@@ -16,3 +10,12 @@ COSE_KDF_Context = [
     ],
     ? SuppPrivInfo : bstr
 ]
+
+
+PartyInfo = (
+    identity : bstr / nil,
+    nonce : bstr / int / nil,
+    other : bstr / nil
+)
+
+;# import rfc9052
