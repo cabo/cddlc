@@ -40,6 +40,7 @@ class CDDL
   end
 
   SAFE_FN = /\A[-._a-zA-Z0-9]+\z/
+  IMPINC = /\A(?:import|include)\z/
 
   def self.from_cddl(s)
     ast = @@parser.parse s
@@ -56,16 +57,10 @@ class CDDL
       ret.directives.each do |di|
         preferred_tag = nil
         case di
-        in ["include" => dir, docref]
-        in ["include" => dir, docref, "as", preferred_tag]
-        in ["import" => dir, docref]
-        in ["import" => dir, docref, "as", preferred_tag]
+        in [IMPINC => dir, SAFE_FN => docref]
+        in [IMPINC => dir, SAFE_FN => docref, "as", SAFE_FN => preferred_tag]
         else
-          warn "** Can't parse include directive #{di.inspect}"
-          next
-        end
-        unless docref =~ SAFE_FN
-          warn "** skipping unsafe filename #{docref}"
+          warn "** Can't parse directive »#{di.join(" ")}«"
           next
         end
         puts "PREFERRED_TAG #{preferred_tag}" if $options.verbose
