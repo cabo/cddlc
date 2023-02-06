@@ -1,4 +1,4 @@
-
+require 'treetop'
 require_relative './cddlgrammar'
 
 class Treetop::Runtime::SyntaxNode
