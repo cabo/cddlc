@@ -1,0 +1,27 @@
+
+AIF-Generic<Toid, Tperm> = [* [Toid, Tperm]]
+
+
+AIF-Specific = AIF-Generic<tstr, uint>
+
+
+AIF-REST = AIF-Generic<local-path, REST-method-set>
+local-path = tstr   ; URI relative to enforcement point
+REST-method-set = uint .bits methods
+methods = &(
+  GET: 0
+  POST: 1
+  PUT: 2
+  DELETE: 3
+  FETCH: 4
+  PATCH: 5
+  iPATCH: 6
+  Dynamic-GET: 32; 0 .plus Dynamic-Offset
+  Dynamic-POST: 33; 1 .plus Dynamic-Offset
+  Dynamic-PUT: 34; 2 .plus Dynamic-Offset
+  Dynamic-DELETE: 35; 3 .plus Dynamic-Offset
+  Dynamic-FETCH: 36; 4 .plus Dynamic-Offset
+  Dynamic-PATCH: 37; 5 .plus Dynamic-Offset
+  Dynamic-iPATCH: 38; 6 .plus Dynamic-Offset
+)
+Dynamic-Offset = 32

@@ -1,0 +1,37 @@
+
+problem-details = non-empty<{
+  ? &(title: -1) => oltext
+  ? &(detail: -2) => oltext
+  ? &(instance: -3) => ~uri
+  ? &(response-code: -4) => uint .size 1
+  ? &(base-uri: -5) => ~uri
+  ? &(base-lang: -6) => tag38-ltag
+  ? &(base-rtl: -7) => tag38-direction
+  standard-problem-detail-entries
+  custom-problem-detail-entries
+}>
+
+standard-problem-detail-entries = (
+  * nint => any
+)
+
+custom-problem-detail-entries = (
+  * (uint/~uri) => { + any => any }
+)
+
+non-empty<M> = (M) .and ({ + any => any })
+
+oltext = text / tag38
+
+
+
+tag38 = #6.38([tag38-ltag, text, ?tag38-direction])
+tag38-ltag = text .regexp "[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*"
+tag38-direction = &(ltr: false, rtl: true, auto: null)
+
+
+tunnel-7807 = {
+  ? &(type: 0) => ~uri
+  ? &(status: 1) => 0..999
+  * text => any
+}

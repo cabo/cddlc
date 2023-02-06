@@ -1,0 +1,6 @@
+
+; This defines an array, the elements of which are to be used
+; in a CBOR Sequence:
+payload = [+ missing-block-number]
+; A unique block number not received:
+missing-block-number = uint

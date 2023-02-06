@@ -1,0 +1,34 @@
+
+      start = COSE_Countersignature_Tagged / Internal_Types
+
+      ; This is defined to make the tool quieter:
+      Internal_Types = Countersign_structure / COSE_Countersignature0
+
+
+      CountersignatureV2_header = (
+          ? 11 => COSE_Countersignature / [+ COSE_Countersignature]
+      )
+
+      Countersignature0V2_header = (
+          ? 12 => COSE_Countersignature0
+      )
+
+
+      COSE_Countersignature_Tagged = #6.19(COSE_Countersignature)
+      COSE_Countersignature = COSE_Signature
+
+
+      COSE_Countersignature0 = bstr
+
+
+      Countersign_structure = [
+        context : "CounterSignature" / "CounterSignature0" /
+                  "CounterSignatureV2" / "CounterSignature0V2",
+        body_protected : empty_or_serialized_map,
+        ? sign_protected : empty_or_serialized_map,
+        external_aad : bstr,
+        payload : bstr,
+        ? other_fields : [+ bstr ]
+      ]
+
+;# import rfc9052

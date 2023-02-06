@@ -1,0 +1,36 @@
+
+start = scope / AAD-list / IPPT-list ; satisfy CDDL decoders
+
+scope = uint .bits scope-flags
+scope-flags = &(
+    has-primary-ctx: 0,
+    has-target-ctx: 1,
+    has-security-ctx: 2,
+)
+
+; Encoded as a CBOR sequence
+AAD-list = [
+    AAD-structure
+]
+
+; Encoded as a CBOR sequence
+IPPT-list = [
+    AAD-structure,
+    target-btsd: bstr ; block-type-specific data of the target block.
+]
+
+AAD-structure = (
+    scope,
+    ? primary-block,  ; present if has-primary-ctx flag set
+    ? block-metadata, ; present if has-target-ctx flag set
+    ? block-metadata, ; present if has-security-ctx flag set
+)
+
+; Selected fields of a canonical block
+block-metadata = (
+    block-type-code: uint,
+    block-number: uint,
+    block-control-flags,
+)
+
+;# import rfc9171

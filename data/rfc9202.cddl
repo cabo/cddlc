@@ -1,0 +1,6 @@
+
+      info = [
+        type : tstr,
+        L    : uint,
+        access_token : bytes
+      ]

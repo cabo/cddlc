@@ -1,0 +1,946 @@
+
+start = iodef
+
+;;; iodef.json: IODEF-Document
+
+iodef-version = -24
+iodef-lang = -23
+iodef-format-id = -22
+iodef-private-enum-name = -21
+iodef-private-enum-id = -20
+iodef-Incident = -19
+iodef-AdditionalData = -18
+iodef-value = -17
+iodef-translation-id = -16
+iodef-name = -15
+iodef-dtype = -14
+iodef-ext-dtype = -13
+iodef-meaning = -12
+iodef-formatid = -11
+iodef-restriction = -10
+iodef-ext-restriction = -9
+iodef-observable-id = -8
+iodef-SoftwareReference = -7
+iodef-URL = -6
+iodef-Description = -5
+iodef-spec-name = -4
+iodef-ext-spec-name = -3
+iodef-purpose = -2
+iodef-ext-purpose = -1
+iodef-status = 0
+iodef-ext-status = 1
+iodef-IncidentID = 2
+iodef-AlternativeID = 3
+iodef-RelatedActivity = 4
+iodef-DetectTime = 5
+iodef-StartTime = 6
+iodef-EndTime = 7
+iodef-RecoveryTime = 8
+iodef-ReportTime = 9
+iodef-GenerationTime = 10
+iodef-Discovery = 11
+iodef-Assessment = 12
+iodef-Method = 13
+iodef-Contact = 14
+iodef-EventData = 15
+iodef-Indicator = 16
+iodef-History = 17
+iodef-id = 18
+iodef-instance = 19
+iodef-ThreatActor = 20
+iodef-Campaign = 21
+iodef-IndicatorID = 22
+iodef-Confidence = 23
+iodef-ThreatActorID = 24
+iodef-CampaignID = 25
+iodef-role = 26
+iodef-ext-role = 27
+iodef-type = 28
+iodef-ext-type = 29
+iodef-ContactName = 30
+iodef-ContactTitle = 31
+iodef-RegistryHandle = 32
+iodef-PostalAddress = 33
+iodef-Email = 34
+iodef-Telephone = 35
+iodef-Timezone = 36
+iodef-handle = 37
+iodef-registry = 38
+iodef-ext-registry = 39
+iodef-PAddress = 40
+iodef-EmailTo = 41
+iodef-TelephoneNumber = 42
+iodef-source = 43
+iodef-ext-source = 44
+iodef-DetectionPattern = 45
+iodef-DetectionConfiguration = 46
+iodef-Application = 47
+iodef-Reference = 48
+iodef-AttackPattern = 49
+iodef-Vulnerability = 50
+iodef-Weakness = 51
+iodef-SpecID = 52
+iodef-ext-SpecID = 53
+iodef-ContentID = 54
+iodef-RawData = 55
+iodef-Platform = 56
+iodef-Scoring = 57
+iodef-ReferenceName = 58
+iodef-specIndex = 59
+iodef-ID = 60
+iodef-occurrence = 61
+iodef-IncidentCategory = 62
+iodef-Impact = 63
+iodef-SystemImpact = 64
+iodef-BusinessImpact = 65
+iodef-TimeImpact = 66
+iodef-MonetaryImpact = 67
+iodef-IntendedImpact = 68
+iodef-Counter = 69
+iodef-MitigatingFactor = 70
+iodef-Cause = 71
+iodef-severity = 72
+iodef-completion = 73
+iodef-ext-severity = 74
+iodef-metric = 75
+iodef-ext-metric = 76
+iodef-duration = 77
+iodef-ext-duration = 78
+iodef-currency = 79
+iodef-rating = 80
+iodef-ext-rating = 81
+iodef-HistoryItem = 82
+iodef-action = 83
+iodef-ext-action = 84
+iodef-DateTime = 85
+iodef-DefinedCOA = 86
+iodef-System = 87
+iodef-Expectation = 88
+iodef-RecordData = 89
+iodef-category = 90
+iodef-ext-category = 91
+iodef-interface = 92
+iodef-spoofed = 93
+iodef-virtual = 94
+iodef-ownership = 95
+iodef-ext-ownership = 96
+iodef-Node = 97
+iodef-NodeRole = 98
+iodef-Service = 99
+iodef-OperatingSystem = 100
+iodef-AssetID = 101
+iodef-DomainData = 102
+iodef-Address = 103
+iodef-Location = 104
+iodef-vlan-name = 105
+iodef-vlan-num = 106
+iodef-unit = 107
+iodef-ext-unit = 108
+iodef-system-status = 109
+iodef-ext-system-status = 110
+iodef-domain-status = 111
+iodef-ext-domain-status = 112
+iodef-Name = 113
+iodef-DateDomainWasChecked = 114
+iodef-RegistrationDate = 115
+iodef-ExpirationDate = 116
+iodef-RelatedDNS = 117
+iodef-NameServers = 118
+iodef-DomainContacts = 119
+iodef-Server = 120
+iodef-SameDomainContact = 121
+iodef-ip-protocol = 122
+iodef-ServiceName = 123
+iodef-Port = 124
+iodef-Portlist = 125
+iodef-ProtoCode = 126
+iodef-ProtoType = 127
+iodef-ProtoField = 128
+iodef-ApplicationHeaderField = 129
+iodef-EmailData = 130
+iodef-IANAService = 131
+iodef-EmailFrom = 132
+iodef-EmailSubject = 133
+iodef-EmailX-Mailer = 134
+iodef-EmailHeaderField = 135
+iodef-EmailHeaders = 136
+iodef-EmailBody = 137
+iodef-EmailMessage = 138
+iodef-HashData = 139
+iodef-Signature = 140
+iodef-RecordPattern = 141
+iodef-RecordItem = 142
+iodef-FileData = 143
+iodef-WindowsRegistryKeysModified = 144
+iodef-CertificateData = 145
+iodef-offset = 146
+iodef-offsetunit = 147
+iodef-ext-offsetunit = 148
+iodef-Key = 149
+iodef-registryaction = 150
+iodef-ext-registryaction = 151
+iodef-KeyName = 152
+iodef-KeyValue = 153
+iodef-Certificate = 154
+iodef-X509Data = 155
+iodef-File = 156
+iodef-FileName = 157
+iodef-FileSize = 158
+iodef-FileType = 159
+iodef-AssociatedSoftware = 160
+iodef-FileProperties = 161
+iodef-scope = 162
+iodef-HashTargetID = 163
+iodef-Hash = 164
+iodef-FuzzyHash = 165
+iodef-DigestMethod = 166
+iodef-DigestValue = 167
+iodef-CanonicalizationMethod = 168
+iodef-FuzzyHashValue = 169
+iodef-AlternativeIndicatorID = 170
+iodef-Observable = 171
+iodef-uid-ref = 172
+iodef-IndicatorExpression = 173
+iodef-IndicatorReference = 174
+iodef-AttackPhase = 175
+iodef-BulkObservable = 176
+iodef-BulkObservableFormat = 177
+iodef-BulkObservableList = 178
+iodef-operator = 179
+iodef-ext-operator = 180
+iodef-euid-ref = 181
+iodef-AttackPhaseID = 182
+
+iodef = {
+ iodef-version => text,
+ ? iodef-lang => lang,
+ ? iodef-format-id => text
+ ? iodef-private-enum-name => text,
+ ? iodef-private-enum-id => text,
+ iodef-Incident => [+ Incident],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+duration = "second" / "minute" / "hour" / "day" / "month" /
+"quarter" / "year" / "ext-value"
+lang = "" / text .regexp "[a-zA-Z]{1,8}(-[a-zA-Z0-9]{1,8})*"
+
+restriction = "public" / "partner" / "need-to-know" / "private" /
+"default" / "white" / "green" / "amber" / "red" /
+"ext-value"
+SpecID = "urn:ietf:params:xml:ns:mile:mmdef:1.2" /  "private"
+IDtype = text .regexp "[a-zA-Z_][a-zA-Z0-9_.-]*"
+IDREFType = IDtype
+URLtype = uri
+TimeZonetype = text .regexp "Z|[\\+\\-](0[0-9]|1[0-4]):[0-5][0-9]"
+PortlistType = text .regexp
+                        "[0-9]+(\\-[0-9]+)?(,[0-9]+(\\-[0-9]+)?)*"
+action = "nothing" / "contact-source-site" / "contact-target-site" /
+"contact-sender" / "investigate" / "block-host" /
+"block-network" / "block-port" / "rate-limit-host" /
+"rate-limit-network" / "rate-limit-port" / "redirect-traffic" /
+"honeypot" / "upgrade-software" / "rebuild-asset" /
+"harden-asset" / "remediate-other" / "status-triage" /
+"status-new-info" / "watch-and-report" / "training" /
+"defined-coa" / "other" / "ext-value"
+
+DATETIME = tdate
+
+BYTE = eb64legacy
+
+MLStringType = {
+    iodef-value => text,
+    ? iodef-lang => lang,
+    ? iodef-translation-id => text
+} / text
+
+PositiveFloatType = float32 .gt 0
+
+PAddressType = MLStringType
+
+ExtensionType  = {
+ iodef-value => text,
+ ? iodef-name => text,
+ iodef-dtype => "boolean" / "byte" / "bytes" / "character" /
+"date-time" / "ntpstamp" / "integer" / "portlist" / "real" /
+"string" / "file" / "path" / "frame" / "packet" / "ipv4-packet" /
+"json" / "ipv6-packet" / "url" / "csv" / "winreg" / "xml" /
+"ext-value"
+.default "string"
+ ? iodef-ext-dtype => text,
+ ? iodef-meaning => text,
+ ? iodef-formatid => text,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+}
+
+SoftwareType = {
+ ? iodef-SoftwareReference => SoftwareReference,
+ ? iodef-URL => [+ URLtype],
+ ? iodef-Description => [+ MLStringType]
+}
+
+SoftwareReference = {
+ ? iodef-value => text,
+ iodef-spec-name => "custom" / "cpe" / "swid" / "ext-value",
+ ? iodef-ext-spec-name => text,
+ ? iodef-dtype => "bytes" / "integer" / "real" / "string" / "xml" /
+"ext-value" .default "string",
+ ? iodef-ext-dtype => text
+}
+
+Incident = {
+ iodef-purpose => "traceback" / "mitigation" / "reporting" /
+"watch" / "other" / "ext-value",
+ ? iodef-ext-purpose => text,
+ ? iodef-status => "new" / "in-progress"/ "forwarded" / "resolved" /
+"future" / "ext-value",
+ ? iodef-ext-status => text,
+ ? iodef-lang => lang,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ iodef-IncidentID => IncidentID,
+ ? iodef-AlternativeID => AlternativeID,
+ ? iodef-RelatedActivity => [+ RelatedActivity],
+ ? iodef-DetectTime => DATETIME,
+ ? iodef-StartTime => DATETIME,
+ ? iodef-EndTime => DATETIME,
+ ? iodef-RecoveryTime => DATETIME,
+ ? iodef-ReportTime => DATETIME,
+ iodef-GenerationTime => DATETIME,
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-Discovery => [+ Discovery],
+ ? iodef-Assessment => [+ Assessment],
+ ? iodef-Method => [+ Method],
+ iodef-Contact => [+ Contact],
+ ? iodef-EventData => [+ EventData],
+ ? iodef-Indicator => [+ Indicator],
+ ? iodef-History => History,
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+IncidentID = {
+ iodef-id => text,
+ iodef-name => text,
+ ? iodef-instance => text,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text
+}
+
+AlternativeID = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ iodef-IncidentID => [+ IncidentID]
+}
+
+RelatedActivity = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-IncidentID => [+ IncidentID],
+ ? iodef-URL => [+ URLtype],
+ ? iodef-ThreatActor => [+ ThreatActor],
+ ? iodef-Campaign => [+ Campaign],
+ ? iodef-IndicatorID => [+ IndicatorID],
+ ? iodef-Confidence => Confidence,
+ ? iodef-Description => [+ text],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+ThreatActor = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-ThreatActorID => [+ text],
+ ? iodef-URL => [+ URLtype],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+Campaign  = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-CampaignID => [+ text],
+ ? iodef-URL => [+ URLtype],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+Contact = {
+ iodef-role => "creator" / "reporter" / "admin" / "tech" /
+"provider" / "user" / "billing" / "legal" / "irt" / "abuse" /
+"cc" / "cc-irt" / "leo" / "vendor" / "vendor-support" /
+"victim" / "victim-notified" / "ext-value",
+ ? iodef-ext-role => text,
+ iodef-type => "person" / "organization" / "ext-value",
+ ? iodef-ext-type => text,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-ContactName => [+ MLStringType],
+ ? iodef-ContactTitle => [+ MLStringType],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-RegistryHandle => [+ RegistryHandle],
+ ? iodef-PostalAddress => [+ PostalAddress],
+ ? iodef-Email => [+ Email],
+ ? iodef-Telephone => [+ Telephone],
+ ? iodef-Timezone => TimeZonetype,
+ ? iodef-Contact => [+ Contact],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+RegistryHandle = {
+ iodef-handle => text,
+ iodef-registry => "internic" / "apnic" / "arin" / "lacnic" /
+"ripe" / "afrinic" / "local" / "ext-value",
+ ? iodef-ext-registry => text
+}
+
+PostalAddress = {
+ ? iodef-type => "street" / "mailing" / "ext-value",
+ ? iodef-ext-type => text,
+ iodef-PAddress => PAddressType,
+ ? iodef-Description => [+ MLStringType]
+}
+
+Email = {
+ ? iodef-type => "direct" / "hotline" / "ext-value",
+ ? iodef-ext-type => text,
+ iodef-EmailTo => text,
+ ? iodef-Description => [+ MLStringType]
+}
+
+Telephone = {
+ ? iodef-type => "wired" / "mobile" / "fax" / "hotline" /
+ "ext-value",
+ ? iodef-ext-type => text,
+ iodef-TelephoneNumber => text,
+ ? iodef-Description => [+ MLStringType]
+}
+
+Discovery = {
+ ? iodef-source => "nidps" / "hips" / "siem" / "av" /
+"third-party-monitoring" / "incident" / "os-log" /
+"application-log" / "device-log" / "network-flow" /
+"passive-dns" / "investigation" / "audit" /
+"internal-notification" / "external-notification" /
+"leo" / "partner" / "actor" / "unknown" / "ext-value",
+ ? iodef-ext-source => text,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-Contact => [+ Contact],
+ ? iodef-DetectionPattern => [+ DetectionPattern]
+}
+
+DetectionPattern = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ (iodef-Description => [+ MLStringType] //
+               iodef-DetectionConfiguration => [+ text]),
+ iodef-Application => SoftwareType
+}
+
+Method = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-Reference => [+ Reference],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-AttackPattern => [+ STRUCTUREDINFO],
+ ? iodef-Vulnerability => [+ STRUCTUREDINFO],
+ ? iodef-Weakness => [+ STRUCTUREDINFO],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+STRUCTUREDINFO = {
+ iodef-SpecID => SpecID,
+ ? iodef-ext-SpecID => text,
+ ? iodef-ContentID => text,
+ ? (iodef-RawData => [+ BYTE] // iodef-Reference => [+ Reference]),
+ ? iodef-Platform => [+ Platform],
+ ? iodef-Scoring => [+ Scoring]
+}
+
+Platform = {
+    iodef-SpecID => SpecID,
+    ? iodef-ext-SpecID => text,
+    ? iodef-ContentID => text,
+    ? iodef-RawData => [+ BYTE],
+    ? iodef-Reference => [+ Reference]
+}
+Scoring = {
+    iodef-SpecID => SpecID,
+    ? iodef-ext-SpecID => text,
+    ? iodef-ContentID => text,
+    ? iodef-RawData => [+ BYTE],
+    ? iodef-Reference => [+ Reference]
+}
+Reference = {
+ ? iodef-observable-id => IDtype,
+ ? iodef-ReferenceName => ReferenceName,
+ ? iodef-URL => [+ URLtype],
+ ? iodef-Description => [+ MLStringType]
+}
+
+ReferenceName = {
+ iodef-specIndex => integer,
+ iodef-ID => IDtype
+}
+
+Assessment = {
+ ? iodef-occurrence => "actual" / "potential",
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ ? iodef-IncidentCategory => [+ MLStringType],
+ iodef-Impact => [+ {iodef-SystemImpact => SystemImpact} /
+          {iodef-BusinessImpact => BusinessImpact} /
+          {iodef-TimeImpact => TimeImpact} /
+          {iodef-MonetaryImpact => MonetaryImpact} /
+          {iodef-IntendedImpact => BusinessImpact}],
+ ? iodef-Counter => [+ Counter],
+ ? iodef-MitigatingFactor => [+ MLStringType],
+ ? iodef-Cause => [+ MLStringType],
+ ? iodef-Confidence => Confidence,
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+SystemImpact = {
+ ? iodef-severity => "low" / "medium" / "high",
+ ? iodef-completion => "failed" / "succeeded",
+ iodef-type => "takeover-account" / "takeover-service" /
+"takeover-system" / "cps-manipulation" / "cps-damage" /
+"availability-data" / "availability-account" /
+"availability-service" / "availability-system" / "damaged-system" /
+"damaged-data" / "breach-proprietary" / "breach-privacy" /
+"breach-credential" / "breach-configuration" / "integrity-data" /
+"integrity-configuration" / "integrity-hardware" /
+"traffic-redirection" / "monitoring-traffic" / "monitoring-host" /
+"policy" / "unknown" / "ext-value" .default "unknown",
+ ? iodef-ext-type => text,
+ ? iodef-Description => [+ MLStringType]
+}
+
+BusinessImpact = {
+? iodef-severity => "none" / "low" / "medium" / "high" / "unknown" /
+"ext-value" .default "unknown",
+ ? iodef-ext-severity => text,
+ iodef-type => "breach-proprietary" / "breach-privacy" /
+"breach-credential" / "loss-of-integrity" / "loss-of-service" /
+"theft-financial" / "theft-service" / "degraded-reputation" /
+"asset-damage" / "asset-manipulation" / "legal" / "extortion" /
+"unknown" / "ext-value" .default "unknown",
+ ? iodef-ext-type => text,
+ ? iodef-Description => [+ MLStringType]
+}
+
+TimeImpact = {
+ iodef-value => PositiveFloatType,
+ ? iodef-severity => "low" / "medium" / "high",
+ iodef-metric => "labor" / "elapsed" / "downtime" / "ext-value",
+ ? iodef-ext-metric => text,
+ ? iodef-duration => duration .default "hour",
+ ? iodef-ext-duration => text
+}
+
+MonetaryImpact = {
+ iodef-value => PositiveFloatType,
+ ? iodef-severity => "low" / "medium" / "high",
+ ? iodef-currency => text
+}
+
+Confidence = {
+ iodef-value => float32,
+ iodef-rating => "low" / "medium" / "high" / "numeric" / "unknown" /
+"ext-value",
+ ? iodef-ext-rating => text
+}
+
+History = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ iodef-HistoryItem => [+ HistoryItem]
+}
+
+HistoryItem = {
+ iodef-action => action .default "other",
+ ? iodef-ext-action => text,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ iodef-DateTime => DATETIME,
+ ? iodef-IncidentID => IncidentID,
+ ? iodef-Contact => Contact,
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-DefinedCOA => [+ text],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+EventData = {
+ ? iodef-restriction => restriction .default "default",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-DetectTime => DATETIME,
+ ? iodef-StartTime => DATETIME,
+ ? iodef-EndTime => DATETIME,
+ ? iodef-RecoveryTime => DATETIME,
+ ? iodef-ReportTime => DATETIME,
+ ? iodef-Contact => [+ Contact],
+ ? iodef-Discovery => [+ Discovery],
+ ? iodef-Assessment => Assessment,
+ ? iodef-Method => [+ Method],
+ ? iodef-System => [+ System],
+ ? iodef-Expectation => [+ Expectation],
+ ? iodef-RecordData => [+ RecordData],
+ ? iodef-EventData => [+ EventData],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+Expectation = {
+ ? iodef-action => action .default "other",
+ ? iodef-ext-action => text,
+ ? iodef-severity => "low" / "medium" / "high",
+ ? iodef-restriction => restriction .default "default",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-DefinedCOA => [+ text],
+ ? iodef-StartTime => DATETIME,
+ ? iodef-EndTime => DATETIME,
+ ? iodef-Contact => Contact
+}
+
+System = {
+ ? iodef-category => "source" / "target" / "intermediate" /
+"sensor" / "infrastructure" / "ext-value",
+ ? iodef-ext-category => text,
+ ? iodef-interface => text,
+ ? iodef-spoofed => "unknown" / "yes" / "no" .default "unknown",
+ ? iodef-virtual => "yes" / "no" / "unknown" .default "unknown",
+ ? iodef-ownership => "organization" / "personal" / "partner" /
+"customer" / "no-relationship" / "unknown" / "ext-value",
+ ? iodef-ext-ownership => text,
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ iodef-Node => Node,
+ ? iodef-NodeRole => [+ NodeRole],
+ ? iodef-Service => [+ Service],
+ ? iodef-OperatingSystem => [+ SoftwareType],
+ ? iodef-Counter => [+ Counter],
+ ? iodef-AssetID => [+ text],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+Node = {
+ (iodef-DomainData => [+ DomainData] //
+                               iodef-Address => [+ Address]),
+ ? iodef-PostalAddress => PostalAddress,
+ ? iodef-Location => [+ MLStringType],
+ ? iodef-Counter => [+ Counter]
+}
+
+Address = {
+ iodef-value => text,
+ iodef-category => "asn" / "atm" / "e-mail" / "ipv4-addr" /
+"ipv4-net" / "ipv4-net-masked" / "ipv4-net-mask" / "ipv6-addr" /
+"ipv6-net" / "ipv6-net-masked" / "mac" / "site-uri" /
+"ext-value" .default "ipv6-addr",
+ ? iodef-ext-category => text,
+ ? iodef-vlan-name => text,
+ ? iodef-vlan-num => integer,
+ ? iodef-observable-id => IDtype
+}
+
+NodeRole = {
+ iodef-category => "client" / "client-enterprise" /
+"client-partner" / "client-remote" / "client-kiosk" /
+"client-mobile" / "server-internal" / "server-public" /
+"www" / "mail" / "webmail" / "messaging" / "streaming" /
+"voice" / "file" / "ftp" / "p2p" / "name" / "directory" /
+"credential" / "print" / "application" / "database" /
+"backup" / "dhcp" / "assessment" / "source-control" /
+"config-management" / "monitoring" / "infra" / "infra-firewall" /
+"infra-router" / "infra-switch" / "camera" / "proxy" /
+"remote-access" / "log" / "virtualization" / "pos" /  "scada" /
+"scada-supervisory" / "sinkhole" / "honeypot" /
+"anomyzation" / "c2-server" / "malware-distribution" /
+"drop-server" / "hop-point" / "reflector" /
+"phishing-site" / "spear-phishing-site" / "recruiting-site" /
+"fraudulent-site" / "ext-value",
+ ? iodef-ext-category => text,
+ ? iodef-Description => [+ MLStringType]
+}
+
+Counter = {
+ iodef-value => float32,
+ iodef-type => "count" / "peak" / "average" / "ext-value",
+ ? iodef-ext-type => text,
+ iodef-unit => "byte" / "mbit" / "packet" / "flow" / "session" /
+"alert" / "message" / "event" / "host" / "site" / "organization" /
+"ext-value",
+ ? iodef-ext-unit => text,
+ ? iodef-meaning => text,
+ ? iodef-duration => duration .default "hour",
+ ? iodef-ext-duration => text
+}
+
+DomainData = {
+ iodef-system-status => "spoofed" / "fraudulent" /
+"innocent-hacked" / "innocent-hijacked" / "unknown" / "ext-value",
+ ? iodef-ext-system-status => text,
+ iodef-domain-status => "reservedDelegation" / "assignedAndActive" /
+"assignedAndInactive" / "assignedAndOnHold" /
+"revoked" / "transferPending" / "registryLock" /
+"registrarLock" / "other" / "unknown" / "ext-value",
+ ? iodef-ext-domain-status => text,
+ ? iodef-observable-id => IDtype,
+ iodef-Name => text,
+ ? iodef-DateDomainWasChecked => DATETIME,
+ ? iodef-RegistrationDate => DATETIME,
+ ? iodef-ExpirationDate => DATETIME,
+ ? iodef-RelatedDNS => [+ ExtensionType],
+ ? iodef-NameServers => [+ NameServers],
+ ? iodef-DomainContacts => DomainContacts
+}
+
+NameServers = {
+ iodef-Server => text,
+ iodef-Address => [+ Address]
+}
+
+DomainContacts = {
+ (iodef-SameDomainContact => text // iodef-Contact => [+ Contact])
+}
+
+Service = {
+ ? iodef-ip-protocol => integer,
+ ? iodef-observable-id => IDtype,
+ ? iodef-ServiceName => ServiceName,
+ ? iodef-Port => integer,
+ ? iodef-Portlist => PortlistType,
+ ? iodef-ProtoCode => integer,
+ ? iodef-ProtoType => integer,
+ ? iodef-ProtoField => integer,
+ ? iodef-ApplicationHeaderField => [+ ExtensionType],
+ ? iodef-EmailData => EmailData,
+ ? iodef-Application => SoftwareType
+}
+
+ServiceName = {
+ ? iodef-IANAService => text,
+ ? iodef-URL => [+ URLtype],
+ ? iodef-Description => [+ MLStringType]
+}
+
+EmailData = {
+ ? iodef-observable-id => IDtype,
+ ? iodef-EmailTo => [+ text],
+ ? iodef-EmailFrom => text,
+ ? iodef-EmailSubject => text,
+ ? iodef-EmailX-Mailer => text,
+ ? iodef-EmailHeaderField => [+ ExtensionType],
+ ? iodef-EmailHeaders => text,
+ ? iodef-EmailBody => text,
+ ? iodef-EmailMessage => text,
+ ? iodef-HashData => [+ HashData],
+ ? iodef-Signature => [+ BYTE]
+}
+
+RecordData = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ ? iodef-DateTime => DATETIME,
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-Application => SoftwareType,
+ ? iodef-RecordPattern => [+ RecordPattern],
+ ? iodef-RecordItem => [+ ExtensionType],
+ ? iodef-URL => [+ URLtype],
+ ? iodef-FileData => [+ FileData],
+ ? iodef-WindowsRegistryKeysModified =>
+                                [+ WindowsRegistryKeysModified],
+ ? iodef-CertificateData => [+ CertificateData],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+RecordPattern = {
+ iodef-value => text,
+ iodef-type => "regex" / "binary" / "xpath" /
+"ext-value"  .default "regex",
+ ? iodef-ext-type => text,
+ ? iodef-offset => integer,
+ ? iodef-offsetunit => "line" / "byte" /
+"ext-value" .default "line",
+ ? iodef-ext-offsetunit => text,
+ ? iodef-instance => integer
+}
+
+WindowsRegistryKeysModified = {
+ ? iodef-observable-id => IDtype,
+ iodef-Key => [+ Key]
+}
+
+Key = {
+ ? iodef-registryaction => "add-key" / "add-value" / "delete-key" /
+"delete-value" / "modify-key" / "modify-value" /
+"ext-value",
+ ? iodef-ext-registryaction => text,
+ ? iodef-observable-id => IDtype,
+ iodef-KeyName => text,
+ ? iodef-KeyValue => text
+}
+
+CertificateData = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ iodef-Certificate => [+ Certificate]
+}
+
+Certificate = {
+ ? iodef-observable-id => IDtype,
+ iodef-X509Data => BYTE,
+ ? iodef-Description => [+ MLStringType]
+}
+
+FileData = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? iodef-observable-id => IDtype,
+ iodef-File => [+ File]
+}
+
+File = {
+ ? iodef-observable-id => IDtype,
+ ? iodef-FileName => text,
+ ? iodef-FileSize => integer,
+ ? iodef-FileType => text,
+ ? iodef-URL => [+ URLtype],
+ ? iodef-HashData => HashData,
+ ? iodef-Signature => [+ BYTE],
+ ? iodef-AssociatedSoftware => SoftwareType,
+ ? iodef-FileProperties => [+ ExtensionType]
+}
+
+HashData = {
+ iodef-scope => "file-contents" / "file-pe-section" /
+"file-pe-iat" / "file-pe-resource" / "file-pdf-object" /
+"email-hash" / "email-headers-hash" / "email-body-hash" /
+"ext-value",
+ ? iodef-HashTargetID => text,
+ ? iodef-Hash => [+ Hash],
+ ? iodef-FuzzyHash => [+ FuzzyHash]
+}
+
+Hash = {
+ iodef-DigestMethod => BYTE,
+ iodef-DigestValue => BYTE,
+ ? iodef-CanonicalizationMethod => BYTE,
+ ? iodef-Application => SoftwareType
+}
+
+FuzzyHash = {
+ iodef-FuzzyHashValue => [+ ExtensionType],
+ ? iodef-Application => SoftwareType,
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+Indicator = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ iodef-IndicatorID => IndicatorID,
+ ? iodef-AlternativeIndicatorID => [+ AlternativeIndicatorID],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-StartTime => DATETIME,
+ ? iodef-EndTime => DATETIME,
+ ? iodef-Confidence => Confidence,
+ ? iodef-Contact => [+ Contact],
+ (iodef-Observable => Observable // iodef-uid-ref => IDREFType //
+  iodef-IndicatorExpression => IndicatorExpression //
+  iodef-IndicatorReference => IndicatorReference),
+ ? iodef-NodeRole => [+ NodeRole],
+ ? iodef-AttackPhase => [+ AttackPhase],
+ ? iodef-Reference => [+ Reference],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+IndicatorID = {
+ iodef-id => IDtype,
+ iodef-name => text,
+ iodef-version => text
+}
+
+AlternativeIndicatorID = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ iodef-IndicatorID => [+ IndicatorID]
+}
+
+Observable = {
+ ? iodef-restriction => restriction .default "private",
+ ? iodef-ext-restriction => text,
+ ? (iodef-System => System // iodef-Address => Address //
+    iodef-DomainData => DomainData //
+    iodef-EmailData => EmailData //
+    iodef-Service => Service //
+    iodef-WindowsRegistryKeysModified =>
+                                  WindowsRegistryKeysModified //
+    iodef-FileData => FileData //iodef-CertificateData =>
+                                              CertificateData //
+    iodef-RegistryHandle =>RegistryHandle// iodef-RecordData =>
+                                                  RecordData //
+    iodef-EventData => EventData // iodef-Incident => Incident //
+    iodef-Expectation => Expectation // iodef-Reference =>
+                                                    Reference //
+    iodef-Assessment => Assessment //
+    iodef-DetectionPattern => DetectionPattern //
+    iodef-HistoryItem => HistoryItem //
+    iodef-BulkObservable => BulkObservable //
+    iodef-AdditionalData => [+ ExtensionType])
+}
+
+BulkObservable = {
+ ? iodef-type => "asn" / "atm" / "e-mail" / "ipv4-addr" /
+"ipv4-net" / "ipv4-net-mask" / "ipv6-addr" / "ipv6-net" /
+"ipv6-net-mask" / "mac" / "site-uri" / "domain-name" /
+"domain-to-ipv4" / "domain-to-ipv6" /
+"domain-to-ipv4-timestamp" / "domain-to-ipv6-timestamp" /
+"ipv4-port" / "ipv6-port" / "windows-reg-key" / "file-hash" /
+"email-x-mailer" / "email-subject" / "http-user-agent" /
+"http-request-uri" / "mutex" / "file-path" / "user-name" /
+"ext-value",
+ ? iodef-ext-type => text,
+ ? iodef-BulkObservableFormat => BulkObservableFormat,
+ iodef-BulkObservableList => text,
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+BulkObservableFormat = {
+ (iodef-Hash => Hash // iodef-AdditionalData => [+ ExtensionType])
+}
+
+IndicatorExpression = {
+ ? iodef-operator => "not" / "and" / "or" / "xor" .default "and",
+ ? iodef-ext-operator => text,
+ ? iodef-IndicatorExpression => [+ IndicatorExpression],
+ ? iodef-Observable => [+ Observable],
+ ? iodef-uid-ref => [+ IDREFType],
+ ? iodef-IndicatorReference => [+ IndicatorReference],
+ ? iodef-Confidence => Confidence,
+ ? iodef-AdditionalData => [+ ExtensionType]
+}
+
+IndicatorReference = {
+ (iodef-uid-ref => IDREFType // iodef-euid-ref => text),
+ ? iodef-version => text
+}
+
+AttackPhase = {
+ ? iodef-AttackPhaseID => [+ text],
+ ? iodef-URL => [+ URLtype],
+ ? iodef-Description => [+ MLStringType],
+ ? iodef-AdditionalData => [+ ExtensionType]
+}

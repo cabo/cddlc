@@ -1,0 +1,67 @@
+
+svt = {
+  jti: text
+  iss: text
+  iat: uint
+  ? aud: text / [* text]
+  ? exp: uint
+  sig_val_claims: SigValClaims
+}
+
+SigValClaims = {
+  ver: text
+  profile: text
+  hash_algo: text
+  sig: [+ Signature]
+  ? ext: Extension
+}
+
+Signature = {
+  sig_ref: SigReference
+  sig_data_ref: [+ SignedDataReference]
+  signer_cert_ref: CertReference
+  sig_val: [+ PolicyValidation]
+  ? time_val: [* TimeValidation]
+  ? ext: Extension
+}
+
+SigReference = {
+  ? id: text / null
+  sig_hash: binary-value
+  sb_hash: binary-value
+}
+
+SignedDataReference = {
+  ref: text
+  hash: binary-value
+}
+
+
+CertReference = {
+  type: "chain" / "chain_hash"
+  ref: [+ text]
+}
+
+PolicyValidation = {
+  pol: text
+  res: "PASSED" / "FAILED" / "INDETERMINATE"
+  ? msg: text / null
+  ? ext: Extension
+}
+
+TimeValidation = {
+  "time": uint
+  type: text
+  iss: text
+  ? id: text / null
+  ? hash: binary-value / null
+  ? val: [* PolicyValidation]
+  ? ext: Extension
+}
+
+
+Extension = {
+  + text => text
+} / null
+
+binary-value = text             ; base64 classic with padding

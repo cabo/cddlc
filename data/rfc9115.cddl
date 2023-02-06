@@ -1,0 +1,99 @@
+
+csr-template-schema = {
+  keyTypes: [ + $keyType ]
+  ? subject: non-empty<distinguishedName>
+  extensions: extensions
+}
+
+non-empty<M> = (M) .and ({ + any => any })
+
+mandatory-wildcard = "**"
+optional-wildcard = "*"
+wildcard = mandatory-wildcard / optional-wildcard
+
+; regtext matches all text strings but "*" and "**"
+regtext = text .regexp "([^\\*].*)|([\\*][^\\*].*)|([\\*][\\*].+)"
+
+regtext-or-wildcard = regtext / wildcard
+
+distinguishedName = {
+  ? country: regtext-or-wildcard
+  ? stateOrProvince: regtext-or-wildcard
+  ? locality: regtext-or-wildcard
+  ? organization: regtext-or-wildcard
+  ? organizationalUnit: regtext-or-wildcard
+  ? emailAddress: regtext-or-wildcard
+  ? commonName: regtext-or-wildcard
+}
+
+$keyType /= rsaKeyType
+$keyType /= ecdsaKeyType
+
+rsaKeyType = {
+  PublicKeyType: "rsaEncryption" ; OID: 1.2.840.113549.1.1.1
+  PublicKeyLength: rsaKeySize
+  SignatureType: $rsaSignatureType
+}
+
+rsaKeySize = uint
+
+; RSASSA-PKCS1-v1_5 with SHA-256
+$rsaSignatureType /= "sha256WithRSAEncryption"
+; RSASSA-PCKS1-v1_5 with SHA-384
+$rsaSignatureType /= "sha384WithRSAEncryption"
+; RSASSA-PCKS1-v1_5 with SHA-512
+$rsaSignatureType /= "sha512WithRSAEncryption"
+; RSASSA-PSS with SHA-256, MGF-1 with SHA-256, and a 32 byte salt
+$rsaSignatureType /= "sha256WithRSAandMGF1"
+; RSASSA-PSS with SHA-384, MGF-1 with SHA-384, and a 48 byte salt
+$rsaSignatureType /= "sha384WithRSAandMGF1"
+; RSASSA-PSS with SHA-512, MGF-1 with SHA-512, and a 64 byte salt
+$rsaSignatureType /= "sha512WithRSAandMGF1"
+
+ecdsaKeyType = {
+  PublicKeyType: "id-ecPublicKey" ; OID: 1.2.840.10045.2.1
+  namedCurve: $ecdsaCurve
+  SignatureType: $ecdsaSignatureType
+}
+
+$ecdsaCurve /= "secp256r1" ; OID: 1.2.840.10045.3.1.7
+$ecdsaCurve /= "secp384r1" ; OID: 1.3.132.0.34
+$ecdsaCurve /= "secp521r1" ; OID: 1.3.132.0.3
+
+$ecdsaSignatureType /= "ecdsa-with-SHA256" ; paired with secp256r1
+$ecdsaSignatureType /= "ecdsa-with-SHA384" ; paired with secp384r1
+$ecdsaSignatureType /= "ecdsa-with-SHA512" ; paired with secp521r1
+
+subjectaltname = {
+  ? DNS: [ + regtext-or-wildcard ]
+  ? Email: [ + regtext ]
+  ? URI: [ + regtext ]
+  * $$subjectaltname-extension
+}
+
+extensions = {
+  ? keyUsage: [ + keyUsageType ]
+  ? extendedKeyUsage: [ + extendedKeyUsageType ]
+  subjectAltName: non-empty<subjectaltname>
+}
+
+keyUsageType /= "digitalSignature"
+keyUsageType /= "nonRepudiation"
+keyUsageType /= "keyEncipherment"
+keyUsageType /= "dataEncipherment"
+keyUsageType /= "keyAgreement"
+keyUsageType /= "keyCertSign"
+keyUsageType /= "cRLSign"
+keyUsageType /= "encipherOnly"
+keyUsageType /= "decipherOnly"
+
+extendedKeyUsageType /= "serverAuth"
+extendedKeyUsageType /= "clientAuth"
+extendedKeyUsageType /= "codeSigning"
+extendedKeyUsageType /= "emailProtection"
+extendedKeyUsageType /= "timeStamping"
+extendedKeyUsageType /= "OCSPSigning"
+extendedKeyUsageType /= oid
+
+oid = text .regexp "([0-2])((\\.0)|(\\.[1-9][0-9]*))*"
+

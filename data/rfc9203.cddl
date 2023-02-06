@@ -1,0 +1,11 @@
+
+OSCORE_Input_Material = {
+    ? 0 => bstr,              ; id
+    ? 1 => int,               ; version
+    ? 2 => bstr,              ; ms
+    ? 3 => tstr / int,        ; hkdf
+    ? 4 => tstr / int,        ; alg
+    ? 5 => bstr,              ; salt
+    ? 6 => bstr,              ; contextId
+    * (int / tstr) => any
+}

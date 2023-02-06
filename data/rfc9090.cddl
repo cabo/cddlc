@@ -1,0 +1,14 @@
+
+; country-rdn = {country-oid => country-value}
+; country-oid = bytes .sdnvseq [85, 4, 6]
+; country-value = text .size 2
+
+
+; country-rdn = {country-oid => country-value}
+; country-oid = bytes .oid [2, 5, 4, 6]
+; country-value = text .size 2
+
+
+oid = #6.111(bstr)
+roid = #6.110(bstr)
+pen = #6.112(bstr)

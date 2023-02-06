@@ -1,0 +1,334 @@
+
+   bpv7_start = bundle / #6.55799(bundle)
+
+   ; Times before 2000 are invalid
+
+   dtn-time = uint
+
+   ; CRC enumerated type
+
+   crc-type = &(
+
+     crc-none: 0,
+
+     crc-16bit: 1,
+
+     crc-32bit: 2
+
+   )
+
+   ; Either 16-bit or 32-bit
+
+   crc-value = (bstr .size 2) / (bstr .size 4)
+
+   creation-timestamp = [
+
+     dtn-time, ; absolute time of creation
+
+     sequence: uint ; sequence within the time
+
+   ]
+
+   eid = $eid .within eid-structure
+
+   eid-structure = [
+
+     uri-code: uint,
+
+     SSP: any
+
+   ]
+
+   $eid /= [
+
+     uri-code: 1,
+
+     SSP: (tstr / 0)
+
+   ]
+
+   $eid /= [
+
+     uri-code: 2,
+
+     SSP: [
+
+       nodenum: uint,
+
+       servicenum: uint
+
+     ]
+
+   ]
+
+   ; The root bundle array
+
+   bundle = [primary-block, *extension-block, payload-block]
+
+   primary-block = [
+
+     version: 7,
+
+     bundle-control-flags,
+
+     crc-type,
+
+     destination: eid,
+
+     source-node: eid,
+
+     report-to: eid,
+
+     creation-timestamp,
+
+     lifetime: uint,
+
+     ? (
+
+       fragment-offset: uint,
+
+       total-application-data-length: uint
+
+     ),
+
+     ? crc-value,
+
+   ]
+
+   bundle-control-flags = uint .bits bundleflagbits
+
+   bundleflagbits = &(
+
+     reserved: 20,
+
+     reserved: 19,
+
+     bundle-deletion-status-reports-are-requested: 18,
+
+     bundle-delivery-status-reports-are-requested: 17,
+
+     bundle-forwarding-status-reports-are-requested: 16,
+
+     reserved: 15,
+
+     bundle-reception-status-reports-are-requested: 14,
+
+     reserved: 13,
+
+     reserved: 12,
+
+     reserved: 11,
+
+     reserved: 10,
+
+     reserved: 9,
+
+     reserved: 8,
+
+     reserved: 7,
+
+     status-time-is-requested-in-all-status-reports: 6,
+
+     user-application-acknowledgement-is-requested: 5,
+
+     reserved: 4,
+
+     reserved: 3,
+
+     bundle-must-not-be-fragmented: 2,
+
+     payload-is-an-administrative-record: 1,
+
+     bundle-is-a-fragment: 0
+
+   )
+
+   ; Abstract shared structure of all non-primary blocks
+
+   canonical-block-structure = [
+
+     block-type-code: uint,
+
+     block-number: uint,
+
+     block-control-flags,
+
+     crc-type,
+
+     ; Each block type defines the content within the byte string
+
+     block-type-specific-data,
+
+     ? crc-value
+
+   ]
+
+   block-control-flags = uint .bits blockflagbits
+
+   blockflagbits = &(
+
+     reserved: 7,
+
+     reserved: 6,
+
+     reserved: 5,
+
+     block-must-be-removed-from-bundle-if-it-cannot-be-processed: 4,
+
+     reserved: 3,
+
+     bundle-must-be-deleted-if-block-cannot-be-processed: 2,
+
+     status-report-must-be-transmitted-if-block-cannot-be-processed:
+     1,
+
+     block-must-be-replicated-in-every-fragment: 0
+
+   )
+
+   block-type-specific-data = bstr / #6.24(bstr)
+
+   ; Actual CBOR data embedded in a byte string, with optional tag to
+   ; indicate so.
+
+   ; Additional plain bstr allows ciphertext data.
+
+   embedded-cbor<Item> = (bstr .cbor Item) / #6.24(bstr .cbor Item) /
+   bstr
+
+   ; Extension block type, which does not specialize other than the
+   ; code/number
+
+   extension-block =
+   $extension-block .within canonical-block-structure
+
+   ; Generic shared structure of all non-primary blocks
+
+   extension-block-use<CodeValue, BlockData> = [
+
+     block-type-code: CodeValue,
+
+     block-number: (uint .gt 1),
+
+     block-control-flags,
+
+     crc-type,
+
+     BlockData,
+
+     ? crc-value
+
+   ]
+
+   ; Payload block type
+
+   payload-block = payload-block-structure .within
+                   canonical-block-structure
+
+   payload-block-structure = [
+
+     block-type-code: 1,
+
+     block-number: 1,
+
+     block-control-flags,
+
+     crc-type,
+
+     $payload-block-data,
+
+     ? crc-value
+
+   ]
+
+   ; Arbitrary payload data, including non-CBOR byte string
+
+   $payload-block-data /= block-type-specific-data
+
+   ; Administrative record as a payload data specialization
+
+   $payload-block-data /= embedded-cbor<admin-record>
+
+   admin-record = $admin-record .within admin-record-structure
+
+   admin-record-structure = [
+
+     record-type-code: uint,
+
+     record-content: any
+
+   ]
+
+   ; Only one defined record type
+
+   $admin-record /= [1, status-record-content]
+
+   status-record-content = [
+
+     bundle-status-information,
+
+     status-report-reason-code: uint,
+
+     source-node-eid: eid,
+
+     subject-creation-timestamp: creation-timestamp,
+
+     ? (
+
+       subject-payload-offset: uint,
+
+       subject-payload-length: uint
+
+     )
+
+   ]
+
+   bundle-status-information = [
+
+     reporting-node-received-bundle: status-info-content,
+
+     reporting-node-forwarded-bundle: status-info-content,
+
+     reporting-node-delivered-bundle: status-info-content,
+
+     reporting-node-deleted-bundle: status-info-content
+
+   ]
+
+   status-info-content = [
+
+     status-indicator: bool,
+
+     ? timestamp: dtn-time
+
+   ]
+
+   ; Previous Node extension block
+
+   $extension-block /=
+
+     extension-block-use<6, embedded-cbor<ext-data-previous-node>>
+
+   ext-data-previous-node = eid
+
+   ; Bundle Age extension block
+
+   $extension-block /=
+
+     extension-block-use<7, embedded-cbor<ext-data-bundle-age>>
+
+   ext-data-bundle-age = uint
+
+   ; Hop Count extension block
+
+   $extension-block /=
+
+     extension-block-use<10, embedded-cbor<ext-data-hop-count>>
+
+   ext-data-hop-count = [
+
+     hop-limit: uint,
+
+     hop-count: uint
+
+   ]

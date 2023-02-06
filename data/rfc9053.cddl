@@ -1,0 +1,18 @@
+
+PartyInfo = (
+    identity : bstr / nil,
+    nonce : bstr / int / nil,
+    other : bstr / nil
+)
+
+COSE_KDF_Context = [
+    AlgorithmID : int / tstr,
+    PartyUInfo : [ PartyInfo ],
+    PartyVInfo : [ PartyInfo ],
+    SuppPubInfo : [
+        keyDataLength : uint,
+        protected : empty_or_serialized_map,
+        ? other : bstr
+    ],
+    ? SuppPrivInfo : bstr
+]
