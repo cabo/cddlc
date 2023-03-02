@@ -64,6 +64,17 @@ begin
     opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :enum, :cddl], "Target format") do |v|
       $options.target = v
     end
+    opts.on("-sRULE", "--start=RULE", String, "Start rule name") do |v|
+      $options.start = v
+    end
+    opts.on("-iIMPORT", "--import=IMPORT", String, "Import [namespace=]reference") do |v|
+      $options.import ||= []
+      $options.import << v
+    end
+    opts.on("-IINCLUDE", "--include=INCLUDE", String, "Include [namespace=]reference") do |v|
+      $options.include ||= []
+      $options.include << v
+    end
   end
   op.parse!
 rescue Exception => e
@@ -71,11 +82,40 @@ rescue Exception => e
   exit 1
 end
 
-if ARGV == []
-  puts op
-  exit 1
+cddl_file = ""
+if $options.start
+  cddl_file << "$.start.$ = #{$options.start}\n"
 end
-cddl_file = ARGF.read
+
+[[$options.include, "include"], [$options.import, "import"]].each do |arr, directive|
+  if arr
+    arr.each do |ref|
+      asname, refname = ref.split("=", 2)
+      unless refname
+        refname = asname
+        asname = nil
+      end
+      cddl_file << ";# #{directive} #{refname}"
+      cddl_file << " as #{asname}" if asname
+      cddl_file << "\n"
+    end
+  end
+end
+
+if $options.verbose
+  warn "::: generated from options:"
+  warn cddl_file
+  warn ":::\n\n"
+end
+
+if ARGV == []
+  if cddl_file == ""
+    puts op
+    exit 1
+  end
+else
+  cddl_file << ARGF.read
+end
 
 cddl = CDDL.from_cddl(cddl_file)
 result = if $options.rules
