@@ -44,7 +44,7 @@ require 'ostruct'
 $options = OpenStruct.new
 begin
   op = OptionParser.new do |opts|
-    opts.banner = "Usage: cddlc.rb [options] file.cddl"
+    opts.banner = "Usage: cddlc.rb [options] [file.cddl... | -]"
 
     opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
       $options.verbose = v
