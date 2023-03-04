@@ -54,6 +54,7 @@ class CDDL
 
   SAFE_FN = /\A[-._a-zA-Z0-9]+\z/
   IMPINC = /\A(?:import|include)\z/
+  IDENTIFIER_RE = /\A[A-Za-z@_$]([-.]*[A-Za-z@_$0-9])*\z/
 
   def self.from_cddl(s)
     ast = @@parser.parse s
@@ -69,20 +70,35 @@ class CDDL
     if $options.cddl2
       ret.directives.each do |di|
         preferred_tag = nil
+        from = nil
         case di
-        in [IMPINC => dir, SAFE_FN => docref]
         in [IMPINC => dir, SAFE_FN => docref, "as", SAFE_FN => preferred_tag]
+        in [IMPINC => dir, SAFE_FN => docref]
+        in [IMPINC => dir, *from, "from", SAFE_FN => docref, "as", SAFE_FN => preferred_tag]
+        in [IMPINC => dir, *from, "from", SAFE_FN => docref]
         else
           warn "** Can't parse directive »#{di.join(" ")}«"
           next
         end
-        puts "PREFERRED_TAG #{preferred_tag}" if $options.verbose
-        puts "DOCREF #{docref}" if $options.verbose
-        fn = docref.downcase << ".cddl"
+        if from
+          from = from.map do |name|
+            name.chomp!(",")
+            if IDENTIFIER_RE === name
+              name
+            else
+              warn "*** invalid identifier #{name.inspect} ignored in »#{di.join(' ')}«"
+              nil
+            end
+          end.compact
+        end
+        puts "FROM #{from.inspect}" if $options.verbose
+        puts "PREFERRED_TAG #{preferred_tag.inspect}" if $options.verbose
+        puts "DOCREF #{docref.inspect}" if $options.verbose
 
+        fn = docref.downcase << ".cddl"
         io = read_from_include_path(fn)
         unless io
-          warn "** include file #{fn} not found in #{CDDL::cddl_include_path.map(&:to_s)}"
+          warn "** #{dir} file #{fn} not found in #{CDDL::cddl_include_path.map(&:to_s)}"
           next
         end
 
