@@ -1,4 +1,4 @@
-cddlgrammar = S 1*(rule S) {
+cddlgrammar = S *(rule S) {
     def ast
       ["cddl", *elements[1].elements.map(&:r__rule).map(&:ast)]
     end

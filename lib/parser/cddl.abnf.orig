@@ -1,4 +1,4 @@
-cddlgrammar = S 1*(rule S)
+cddlgrammar = S *(rule S)
 rule = typename [genericparm] S assignt S type
      / groupname [genericparm] S assigng S grpent
 
@@ -76,7 +76,7 @@ SCHAR = %x20-21 / %x23-5B / %x5D-7E / %x80-10FFFD / SESC
 
 SESC = "\" ( %x22 / "/" / "\" /                 ; \" \/ \\
              %x62 / %x66 / %x6E / %x72 / %x74 / ; \b \f \n \r \t
-             (%x75 hexchar) )                   ; \u
+             (%x75 hexchar) )                   ; \uXXXX
 
 hexchar = non-surrogate / (high-surrogate "\" %x75 low-surrogate)
 non-surrogate = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /
