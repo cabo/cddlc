@@ -39,6 +39,19 @@ class CDDL
            end])
   end
 
+  def self.read_from_include_path(fn)
+    io = nil
+    CDDL::cddl_include_path.each do |path|
+      begin
+        io = (path + fn).open
+        break
+      rescue Errno::ENOENT
+        next
+      end
+    end
+    io
+  end
+
   SAFE_FN = /\A[-._a-zA-Z0-9]+\z/
   IMPINC = /\A(?:import|include)\z/
 
@@ -67,15 +80,7 @@ class CDDL
         puts "DOCREF #{docref}" if $options.verbose
         fn = docref.downcase << ".cddl"
 
-        io = nil
-        CDDL::cddl_include_path.each do |path|
-          begin
-            io = (path + fn).open
-            break
-          rescue Errno::ENOENT
-            next
-          end
-        end
+        io = read_from_include_path(fn)
         unless io
           warn "** include file #{fn} not found in #{CDDL::cddl_include_path.map(&:to_s)}"
           next
