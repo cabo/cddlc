@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "cddlc"
-  s.version = "0.1.4"
+  s.version = "0.1.5"
   s.summary = "CDDL (Concise Data Definition Language) converters and miscellaneous tools"
   s.description = %q{cddlc implements converters and miscellaneous tools for CDDL, RFC 8610}
   s.author = "Carsten Bormann"
@@ -15,6 +15,6 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'bundler', '~>1'
   s.add_dependency 'treetop', '~>1'
-  s.add_dependency 'json'
-  s.add_dependency 'neatjson'
+  s.add_dependency 'json', '~>2'
+  s.add_dependency 'neatjson', '~>0.10'
 end

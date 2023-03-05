@@ -1,5 +1,9 @@
 task :default => :build
 
+task :i => "lib/parser/cddlgrammar.rb" do
+  sh "time gebuin cddlc.gemspec"
+end
+
 task :build => "lib/parser/cddlgrammar.rb" do
   sh "gem build cddlc.gemspec"
 end
