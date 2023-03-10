@@ -68,6 +68,8 @@ class CDDL
       [4, "##{maj}.#{min}"]
     in ["prim", 6, Integer => tag, type]
       [4, "#6.#{tag}(#{write_rhs(type, 0, indent, pn)})"]
+    in ["prim", 6, Array => tag, type]
+      [4, "#6.<#{write_rhs(tag, 0, indent, pn)}>(#{write_rhs(type, 0, indent, pn)})"]
     in ["prim", 6, nil, type]
       [4, "#6(#{write_rhs(type, 0, indent, pn)})"]
 # prim: extension for #6.<i>(t)

@@ -31,7 +31,7 @@ class CDDL
       ["enum", visit(prod, &block)]
     in ["unwrap", prod]
       ["unwrap", visit(prod, &block)] # XXX, this may need to be bottled in a rule
-    in ["prim", Array => prod, *prods]
+    in ["prim", prod, *prods]
       ["prim", visit(prod, &block), *visit_all(prods, &block)]
     in ["mem", *prods]
       ["mem", *visit_all(prods, &block)]

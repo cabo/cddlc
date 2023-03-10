@@ -49,15 +49,17 @@ type2 = value
       / "~" S typename [genericarg] { def ast () ["unwrap", mkgen(typename, elements[3])] end}
       / "&" S "(" S group S ")" { def ast() ["enum", group.ast] end}
       / "&" S groupname [genericarg] { def ast() ["enum", mkgen(groupname, elements[3])] end}
-      / "#" "6" ["." uint] "(" S type S ")" { def ast
+      / "#" "6" ["." tag-number] "(" S type S ")" { def ast
            el = elements[2].elements
-           ["prim", 6, el && el[1].text_value.to_i, elements[5].ast]
+           ["prim", 6, el && el[1].ast, elements[5].ast]
          end }
       / "#" DIGIT ["." uint] { def ast
            ["prim", elements[1].text_value.to_i,
             *(el = elements[2].elements) ? [el[1].text_value.to_i] : []]
          end }               ; major/ai
       / "#"  {def ast() ["prim"] end}                               ; any
+tag-number = uint { def ast() text_value.to_i end
+}/ ("<" type ">"){ def ast() elements[1].ast end }
 
 rangeop = "..." / ".."
 
