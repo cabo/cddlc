@@ -98,9 +98,9 @@ class CDDL
           end
         end.compact
       end
-      puts "FROM #{from.inspect}" if $options.verbose
-      puts "PREFERRED_TAG #{preferred_tag.inspect}" if $options.verbose
-      puts "DOCREF #{docref.inspect}" if $options.verbose
+      warn "FROM #{from.inspect}" if $options.verbose
+      warn "PREFERRED_TAG #{preferred_tag.inspect}" if $options.verbose
+      warn "DOCREF #{docref.inspect}" if $options.verbose
 
       fn = docref.downcase << ".cddl"
       io = CDDL.read_from_include_path(fn)
@@ -162,6 +162,7 @@ class CDDL
           end
           break unless got_more
           to_be_imported = cddl_undefined # XXX square...
+          warn "TO IMPORT #{to_be_imported.inspect}" if $options.verbose
           must_be_found = false
         end
         if preferred_tag

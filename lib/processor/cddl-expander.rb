@@ -42,7 +42,7 @@ class CDDL
       else
       end
     end
-    p @gen if $options.verbose
+    warn "@gen = #{@gen.inspect}" if $options.verbose
     @gen.each do |k, v|
       parmnames = v[0]
       fail unless rules[k] == ["parm", parmnames, v[1]]
@@ -53,7 +53,7 @@ class CDDL
       fail if Array === name
       @new_rules[name] = expand_prod(prod)
     end
-    p @new_rules if $options.verbose
+    warn "@new_rules = #{@new_rules.inspect}" if $options.verbose
     @rules = @new_rules
   end
 end
