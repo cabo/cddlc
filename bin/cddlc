@@ -82,6 +82,11 @@ rescue Exception => e
   exit 1
 end
 
+if ($options.expand_generics) && !$options.rules
+  warn "** can't expand in tree; adding -r flag" 
+  $options.rules = true
+end
+
 cddl_file = ""
 if $options.start
   cddl_file << "$.start.$ = #{$options.start}\n"
@@ -117,6 +122,7 @@ else
   cddl_file << ARGF.read
 end
 
+
 cddl = CDDL.from_cddl(cddl_file)
 result = if $options.rules
            if $options.expand_generics
@@ -125,7 +131,6 @@ result = if $options.rules
            end
            cddl.rules
          else
-           warn "** can't expand in tree; use -r flag as well" if $options.expand_generics
            cddl.tree
          end
 
