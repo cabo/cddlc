@@ -55,6 +55,9 @@ begin
     opts.on("-x", "--[no-]expand", "Expand generics") do |v|
       $options.expand_generics = v
     end
+    opts.on("-f", "--[no-]flattening", "Flattening") do |v|
+      $options.flattening = v
+    end
     opts.on("-u", "--[no-]undefined", "Note undefined names") do |v|
       $options.note_undefined = v
     end
@@ -128,6 +131,11 @@ result = if $options.rules
            if $options.expand_generics
              require_relative "../lib/processor/cddl-expander.rb"
              cddl.expand_generics
+           end
+           if $options.flattening
+             require_relative "../lib/processor/cddl-flattening.rb"
+             cddl.flattening
+             warn "*** done flattening"
            end
            cddl.rules
          else
