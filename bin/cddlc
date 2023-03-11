@@ -85,8 +85,8 @@ rescue Exception => e
   exit 1
 end
 
-if ($options.expand_generics) && !$options.rules
-  warn "** can't expand in tree; adding -r flag" 
+if ($options.expand_generics || $options.flattening) && !$options.rules
+  warn "** can't expand or flatten in tree; adding -r flag"
   $options.rules = true
 end
 
@@ -135,7 +135,7 @@ result = if $options.rules
            if $options.flattening
              require_relative "../lib/processor/cddl-flattening.rb"
              cddl.flattening
-             warn "*** done flattening"
+             warn "*** done flattening" if $options.verbose
            end
            cddl.rules
          else
