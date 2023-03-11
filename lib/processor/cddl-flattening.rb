@@ -24,7 +24,7 @@ class CDDL
         in ["mem", key, value]
           _labeled, keyname = flattening_key_name(key, value, false)
           if keyname
-            symtab[keyname] << [name, keyname]
+            symtab[keyname] << [name, value]
             false
           end
         else
@@ -32,7 +32,15 @@ class CDDL
         end
       end
     end
-    symtab
+    symtab_replacements = Hash[symtab.map do |k, v|
+      s = Set[*v.map{_2}]
+      # warn "** #{k} #{s.inspect}"
+      if s.size == 1
+        [k, [[v.map{|k, v| k}.join("|"), s.first]]]
+      end
+    end.compact]
+    # warn "** symtab_replacements: #{symtab_replacements.inspect}" if $options.verbose
+    symtab.merge(symtab_replacements)
   end
   def flattening_mogrify(name, prod, symtab, alias_rules)
     step1 = visit(prod) do |here|
@@ -54,8 +62,11 @@ class CDDL
                 keyname
               end
             new_value2 = flattening_mogrify(new_name, value, symtab, alias_rules)
-            fail [alias_rules, new_name].inspect if alias_rules[new_name] # XXX
-            alias_rules[new_name] = new_value2
+            if ar = alias_rules[new_name]
+              fail [:ALIAS_RULES, ar, new_value].inspect if ar != new_value2
+            else
+              alias_rules[new_name] = new_value2
+            end
             [true, ["mem", key, ["name", new_name]]]
           end
         else
@@ -82,7 +93,7 @@ class CDDL
   end
   def flattening
     symtab = flattening_occurrences
-    # warn "*** SYMTAB #{symtab.inspect}"
+    PP.pp(["*** SYMTAB", symtab], STDERR) if $options.verbose
     rules.replace(flattening_replace(symtab))
   end
 end
