@@ -15,7 +15,7 @@ def named_keys(tree)
   when "rep"
     named_keys(tree[3])
   when "mem"
-    key = tree[1]
+    key = tree[2]
     if Array === key && key[0] == "name"
       [key[1]]
     end

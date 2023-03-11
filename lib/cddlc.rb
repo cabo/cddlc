@@ -55,6 +55,7 @@ class CDDL
   SAFE_FN = /\A[-._a-zA-Z0-9]+\z/
   IMPINC = /\A(?:import|include)\z/
   IDENTIFIER_RE = /\A[A-Za-z@_$]([-.]*[A-Za-z@_$0-9])*\z/
+  INT_RE = /\A0|[-]?[1-9][0-9]*\z/
 
   def self.from_cddl(s)
     ast = @@parser.parse s

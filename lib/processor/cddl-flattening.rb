@@ -2,15 +2,14 @@ require_relative "../cddlc.rb"
 require_relative "./cddl-visitor.rb"
 
 class CDDL
-  ID_RE = /\A[A-Za-z@_$]([-.]*[A-Za-z@_$0-9])*\z/
   MOGRIFIED_ID_RE = /\A\$\.[A-Za-z@_$]([-.]*[A-Za-z@_$0-9])*\z/
   def flattening_key_name(key, value, env = nil)
     case key
-    in ["enum", ["mem", ["text", ID_RE => text], _]]
+    in ["enum", ["mem", _cut, ["text", IDENTIFIER_RE => text], _]]
       [false, text]
-    in ["text", ID_RE => text]
+    in ["text", IDENTIFIER_RE => text]
       [false, text]
-    in ["number", /\A0|[-]?[1-9][0-9]*\z/ => intval] if env
+    in ["number", INT_RE => intval] if env
       [true, "$.#{env}$#{intval}"]
     else
       [false]
@@ -21,7 +20,7 @@ class CDDL
     rules.each do |name, prod|
       visit(prod) do |here|
         case here
-        in ["mem", key, value]
+        in ["mem", _cut, key, value]
           _labeled, keyname = flattening_key_name(key, value, false)
           if keyname
             symtab[keyname] << [name, value]
@@ -45,7 +44,7 @@ class CDDL
   def flattening_mogrify(name, prod, symtab, alias_rules)
     step1 = visit(prod) do |here|
         case here
-        in ["mem", key, value]
+        in ["mem", cut, key, value]
           ### mogrify
           labeled, keyname = flattening_key_name(key, value, name)
           if keyname
@@ -67,7 +66,7 @@ class CDDL
             else
               alias_rules[new_name] = new_value2
             end
-            [true, ["mem", key, ["name", new_name]]]
+            [true, ["mem", cut, key, ["name", new_name]]]
           end
         else
           false
@@ -75,7 +74,7 @@ class CDDL
       end
     step2 = visit(step1) do |here|
       case here
-      in ["enum", ["mem", ["text", ID_RE], ["name", MOGRIFIED_ID_RE => new_name]]]
+      in ["enum", ["mem", _cut, ["text", IDENTIFIER_RE], ["name", MOGRIFIED_ID_RE => new_name]]]
         [true, ["name", new_name]]
       else
         false

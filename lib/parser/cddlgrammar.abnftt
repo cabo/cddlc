@@ -77,13 +77,15 @@ grpchoice = *(grpent optcom) {
     end
 }
 
-grpent = [occurs] [memberkey S] type { def ast() repwrap(elements[0], ["mem", elements[1].elements ? elements[1].memberkey.ast : nil, elements[2].ast]) end}
+grpent = [occurs] [memberkey S] type { def ast()
+  repwrap(elements[0], ["mem", *elements[1].elements ? elements[1].memberkey.ast : [false, nil],
+                               elements[2].ast]) end}
        / [occurs] groupname [genericarg]  ; preempted by above
        / [occurs] "(" S group S ")" { def ast() repwrap(elements[0], group.ast()) end}
 
-memberkey = type1 S ["^" S] "=>" { def ast() type1.ast end}
-          / bareword S ":" { def ast() ["text", bareword.text_value] end}
-          / value S ":" { def ast() value.ast end}
+memberkey = type1 S ["^" S] "=>" { def ast() [!!elements[2].elements, type1.ast] end}
+          / bareword S ":" { def ast() [true, ["text", bareword.text_value]] end}
+          / value S ":" { def ast() [true, value.ast] end}
 
 bareword = id
 

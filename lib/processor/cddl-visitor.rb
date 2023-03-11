@@ -33,8 +33,8 @@ class CDDL
       ["unwrap", visit(prod, &block)] # XXX, this may need to be bottled in a rule
     in ["prim", prod, *prods]
       ["prim", visit(prod, &block), *visit_all(prods, &block)]
-    in ["mem", *prods]
-      ["mem", *visit_all(prods, &block)]
+    in ["mem", cut, *prods]
+      ["mem", cut, *visit_all(prods, &block)]
     in ["rep", s, e, prod]
       ["rep", s, e, visit(prod, &block)]
     else

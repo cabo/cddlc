@@ -90,10 +90,14 @@ class CDDL
                 "#{s}*#{e || ""}"
               end
       [1, "#{occur}#{write_rhs(group, 2, indent, pn)}"]
-    in ["mem", nil, t2]
+    in ["mem", false, nil, t2]
       [2, write_rhs(t2, 2, indent, pn)]
-    in ["mem", t1, t2]
-      [2, "#{write_rhs(t1, 3, indent, pn)} => #{write_rhs(t2, 2, indent, pn)}"]
+    in ["mem", true, ["text", IDENTIFIER_RE => bareword], t2]
+      [2, "#{bareword}: #{write_rhs(t2, 2, indent, pn)}"]
+    in ["mem", true, ["number", INT_RE => bareword], t2]
+      [2, "#{bareword}: #{write_rhs(t2, 2, indent, pn)}"]
+    in ["mem", cut, t1, t2]
+      [2, "#{write_rhs(t1, 3, indent, pn)} #{cut ? "^" : ""}=> #{write_rhs(t2, 2, indent, pn)}"]
       # 2->3: work around cddl tool limitation
     in ["bytes", t]
       [4, t]                    # XXX not very clean
