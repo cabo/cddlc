@@ -1,0 +1,19 @@
+COSE_Sign1-coswid<payload> = [
+    protected: bstr .cbor protected-signed-coswid-header,
+    unprotected: unprotected-signed-coswid-header,
+    payload: bstr .cbor payload,
+    signature: bstr,
+]
+
+cose-label = int / tstr
+cose-values = any
+
+protected-signed-coswid-header = {
+    1 => int,                      ; algorithm identifier
+    3 => "application/swid+cbor",
+    * cose-label => cose-values,
+}
+
+unprotected-signed-coswid-header = {
+    * cose-label => cose-values,
+}
