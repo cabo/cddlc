@@ -42,7 +42,7 @@ class CDDL
     in ["gen", id, *parms]  # oops -- namep vs. namea; ouch
       [4, "#{id}<#{parms.map{write_rhs(_1, 2, indent, pn)}.join(", ")}>"]
     in ["tcho", *types]
-      [2, types.map{write_rhs(_1, 3, indent, pn)}.join(" / ")]
+      [2.1, types.map{write_rhs(_1, 3, indent, pn)}.join(" / ")]
     in ["gcho", *groups]
       [0, groups.map{write_rhs(_1, 2, indent, pn)}.join(" // ")]
     in ["op", op, l, r]
@@ -116,7 +116,7 @@ class CDDL
       in ["parm", parmnames, _type]
       else
       end
-      "#{write_lhs(k, parmnames)} = #{write_rhs(v, 2)}" # 2: parenthesize groups
+      "#{write_lhs(k, parmnames)} = #{write_rhs(v, 2.1)}" # 2: parenthesize groups
     }.join("\n")
   end
 
