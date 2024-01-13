@@ -27,7 +27,11 @@ class CDDL
   def cddl_undefined
     # currently only works on expanded...
     cddl2 = self.deep_clone                # needs deep-clone
-    cddl2.expand_generics
+    begin
+      cddl2.expand_generics
+    rescue CDDL::MissingGenericError => e
+      return [e.name] # make this expandable first by pulling missing generic
+    end
     used = {}
     cddl2.rules.each do |k, v|
       fail unless String === k
