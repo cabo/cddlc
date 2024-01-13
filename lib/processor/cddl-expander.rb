@@ -2,6 +2,16 @@ require_relative "../cddlc.rb"
 require_relative "./cddl-visitor.rb"
 
 class CDDL
+
+  class MissingGenericError < StandardError
+    attr_reader :name, :args
+    def initialize(name_, args_)
+      @name = name_
+      @args = args_
+      super("** no generic for #{name}<#{args}>")
+    end
+  end
+
   def substitute(prod, parms, subs, &block)
     visit(prod) do |p, &block1|
       case p
@@ -18,7 +28,9 @@ class CDDL
   end
   def gen_apply(gen_name, gen_args, &block)
     gen_parms, gen_prod = @gen[gen_name]
-    fail "** no generic for #{gen_name}<#{gen_args}>" unless gen_parms
+    unless gen_parms
+      fail MissingGenericError.new(gen_name, gen_args)
+    end
     substitute(gen_prod, gen_parms, gen_args, &block)
   end
   def expand_prod(prod)
