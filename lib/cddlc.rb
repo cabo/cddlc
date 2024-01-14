@@ -162,8 +162,12 @@ class CDDL
             end
           end
           break unless got_more
+          recently_imported = to_be_imported
           to_be_imported = cddl_undefined # XXX square...
           warn "TO IMPORT #{to_be_imported.inspect}" if $options.verbose
+          if to_be_imported == recently_imported
+            fail "No progress importing #{to_be_imported.inspect} from #{fn} (generics issue?)"
+          end
           must_be_found = false
         end
         if preferred_tag
