@@ -78,11 +78,14 @@ SCHAR = %x20-21 / %x23-5B / %x5D-7E / NONASCII / SESC
 SESC = "\" ( %x22 / "/" / "\" /                 ; \" \/ \\
              %x62 / %x66 / %x6E / %x72 / %x74 / ; \b \f \n \r \t
              (%x75 hexchar) )                   ; \uXXXX
-hexchar = non-surrogate / (high-surrogate "\" %x75 low-surrogate)
+
+hexchar = "{" (1*"0" [ hexscalar ] / hexscalar) "}" /
+          non-surrogate / (high-surrogate "\" %x75 low-surrogate)
 non-surrogate = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /
                 ("D" %x30-37 2HEXDIG )
 high-surrogate = "D" ("8"/"9"/"A"/"B") 2HEXDIG
 low-surrogate = "D" ("C"/"D"/"E"/"F") 2HEXDIG
+hexscalar = "10" 4HEXDIG / HEXDIG1 4HEXDIG / non-surrogate / 1*3HEXDIG
 
 bytes = [bsqual] %x27 *BCHAR %x27
 BCHAR = %x20-26 / %x28-5B / %x5D-7E / NONASCII / SESC / "\'" / CRLF
@@ -94,6 +97,7 @@ EALPHA = ALPHA / "@" / "_" / "$"
 DIGIT = %x30-39
 DIGIT1 = %x31-39
 HEXDIG = DIGIT / "A" / "B" / "C" / "D" / "E" / "F"
+HEXDIG1 = DIGIT1 / "A" / "B" / "C" / "D" / "E" / "F"
 BINDIG = %x30-31
 
 S = *WS
