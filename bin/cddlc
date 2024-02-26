@@ -64,7 +64,7 @@ begin
     opts.on("-2", "--[no-]cddl2", "Perform some CDDL 2.0 processing") do |v|
       $options.cddl2 = v
     end
-    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :enum, :cddl], "Target format") do |v|
+    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :const, :enum, :cddl], "Target format") do |v|
       $options.target = v
     end
     opts.on("-sRULE", "--start=RULE", String, "Start rule name") do |v|
@@ -152,6 +152,9 @@ when :neat, :json
   puts JSON.neat_generate(result, after_comma: 1, after_colon: 1)
 when :yaml
   puts result.to_yaml
+when :const
+  require_relative "../lib/processor/cddl-constants.rb"
+  puts cddl.extract_constants.to_yaml
 when :enum
   rules = cddl.rules
   rules.each do |k, v|
