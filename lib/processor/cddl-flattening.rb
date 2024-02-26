@@ -61,12 +61,14 @@ class CDDL
                 keyname
               end
             new_value2 = flattening_mogrify(new_name, value, symtab, alias_rules)
-            if ar = alias_rules[new_name]
-              fail [:ALIAS_RULES, ar, new_value].inspect if ar != new_value2
-            else
-              alias_rules[new_name] = new_value2
+            new_name2 = new_name
+            n = 0
+            while ar = alias_rules[new_name2] and ar != new_value2
+              n += 1
+              new_name2 = new_name << "@" << n.to_s
             end
-            [true, ["mem", cut, key, ["name", new_name]]]
+            alias_rules[new_name2] = new_value2
+            [true, ["mem", cut, key, ["name", new_name2]]]
           end
         else
           false
@@ -74,8 +76,8 @@ class CDDL
       end
     step2 = visit(step1) do |here|
       case here
-      in ["enum", ["mem", _cut, ["text", IDENTIFIER_RE], ["name", MOGRIFIED_ID_RE => new_name]]]
-        [true, ["name", new_name]]
+      in ["enum", ["mem", _cut, ["text", IDENTIFIER_RE], ["name", MOGRIFIED_ID_RE => new_name2]]]
+        [true, ["name", new_name2]]
       else
         false
       end
