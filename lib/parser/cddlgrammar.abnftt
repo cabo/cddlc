@@ -49,16 +49,20 @@ type2 = value
       / "~" S typename [genericarg] { def ast () ["unwrap", mkgen(typename, elements[3])] end}
       / "&" S "(" S group S ")" { def ast() ["enum", group.ast] end}
       / "&" S groupname [genericarg] { def ast() ["enum", mkgen(groupname, elements[3])] end}
-      / "#" "6" ["." tag-number] "(" S type S ")" { def ast
+      / "#" "6" ["." head-number] "(" S type S ")" { def ast
            el = elements[2].elements
            ["prim", 6, el && el[1].ast, elements[5].ast]
+         end }
+      / "#" "7" ["." head-number]{ def ast
+           el = elements[2].elements
+           ["prim", 7, *el && [el[1].ast]]
          end }
       / "#" DIGIT ["." uint] { def ast
            ["prim", elements[1].text_value.to_i,
             *(el = elements[2].elements) ? [el[1].text_value.to_i] : []]
          end }               ; major/ai
       / "#"  {def ast() ["prim"] end}                               ; any
-tag-number = uint { def ast() text_value.to_i end
+head-number = uint { def ast() text_value.to_i end
 }/ ("<" type ">"){ def ast() elements[1].ast end }
 
 rangeop = "..." / ".."
@@ -138,7 +142,8 @@ non-surrogate = ((DIGIT / "A"/"B"/"C" / "E"/"F") 3HEXDIG) /
                 ("D" %x30-37 2HEXDIG )
 high-surrogate = "D" ("8"/"9"/"A"/"B") 2HEXDIG
 low-surrogate = "D" ("C"/"D"/"E"/"F") 2HEXDIG
-hexscalar = "10" 4HEXDIG / HEXDIG1 4HEXDIG / non-surrogate / 1*3HEXDIG
+hexscalar = "10" 4HEXDIG / HEXDIG1 4HEXDIG
+          / non-surrogate / 1*3HEXDIG
 
 bytes = [bsqual] %x27 *BCHAR %x27 { def ast() ["bytes", text_value] end}
 BCHAR = %x20-26 / %x28-5B / %x5D-7E / NONASCII / SESC / "\'" / CRLF
