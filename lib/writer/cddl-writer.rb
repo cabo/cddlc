@@ -114,11 +114,18 @@ class CDDL
   def to_s
     rules.map {|k, v|
       parmnames = false
+      assign = "="
       case v
+      in ["tadd", *rest]
+        assign = "/="
+        v = ["tcho", *rest]
+      in ["gadd", *rest]
+        assign = "//="
+        v = ["gcho", *rest]
       in ["parm", parmnames, _type]
       else
       end
-      "#{write_lhs(k, parmnames)} = #{write_rhs(v, 2.1)}" # 2: parenthesize groups
+      "#{write_lhs(k, parmnames)} #{assign} #{write_rhs(v, 2.1)}" # 2: parenthesize groups
     }.join("\n")
   end
 
