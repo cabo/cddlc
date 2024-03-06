@@ -111,8 +111,7 @@ class CDDL
     prec_check(ret, targetprec, prec, indent_s)
   end
 
-  def to_s
-    rules.map {|k, v|
+  def write_rule(k, v)
       parmnames = false
       assign = "="
       case v
@@ -126,7 +125,10 @@ class CDDL
       else
       end
       "#{write_lhs(k, parmnames)} #{assign} #{write_rhs(v, 2.1)}" # 2: parenthesize groups
-    }.join("\n")
+  end
+
+  def to_s
+    rules.map {|k, v| write_rule(k, v) }.join("\n")
   end
 
 end
