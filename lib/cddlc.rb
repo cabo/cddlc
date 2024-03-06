@@ -198,10 +198,18 @@ class CDDL
     end
   end
 
+  RULE_OP_TO_CHOICE = {"/=" => ["tcho", "tadd"], "//=" => ["gcho", "gadd"]}
+  CHOICERULES = RULE_OP_TO_CHOICE.values.flatten
+  RULE_OUTER_TO_CHOICE = {"tadd" => ["tcho", "tadd"], "gadd" => ["gcho", "gadd"]}
+
   def store_rule(k, v)
     if old = rules[k]
       if old != v
-        return old              # error
+        if cho = RULE_OUTER_TO_CHOICE[v[0]]
+          merge_to_rule(k, v, cho)
+        else
+          return old              # error
+        end
       end
     else
       rules[k] = v
@@ -226,9 +234,38 @@ class CDDL
     Marshal.load(Marshal.dump(self))
   end
 
-
-  RULE_OP_TO_CHOICE = {"/=" => ["tcho", "tadd"], "//=" => ["gcho", "gadd"]}
-  CHOICERULES = RULE_OP_TO_CHOICE.values.flatten
+  def merge_to_rule(name, val, cho)
+        @rules[name] = nv =
+          if (old = @rules[name]) && old != val
+            fail "overwriting #{write_rule(name, old)} ...with... #{write_rule(name, val)}" unless cho
+            if Array === old && cho.include?(old[0])
+              if cho.include?(val[0])
+                old.dup.append(*val[1..-1])
+              else
+                old.dup << val
+              end
+            else
+              #  can't put an old "g/tadd" into a new "t/gcho"
+              fail "can't add #{write_rule(name, [cho[1], val])} ...to... #{write_rule(name, old)}" if CHOICERULES.include?(old[0])
+              [cho[0], old, val] # old might need to be packaged for gcho
+            end
+          else
+            if cho
+              if val[0] == cho[0]
+                [cho[1], *val[1..-1]]
+              else
+                [cho[1], val]
+              end
+            else
+              val
+            end
+          end
+        if name[0..1] == "$$"
+          check_socket(name, nv, "gadd", "tadd", "tcho", "type", "group")
+        elsif name[0] == "$"
+          check_socket(name, nv, "tadd", "gadd", "gcho", "group", "type")
+        end
+  end
 
   def rules
     if @rules.nil?              # memoize
@@ -260,36 +297,7 @@ class CDDL
         else
           fail name
         end
-        @rules[name] = nv =
-          if (old = @rules[name]) && old != val
-            fail "overwriting #{write_rule(name, old)} ...with... #{write_rule(name, val)}" unless cho
-            if Array === old && cho.include?(old[0])
-              if cho.include?(val[0])
-                old.dup.append(*val[1..-1])
-              else
-                old.dup << val
-              end
-            else
-              #  can't put an old "g/tadd" into a new "t/gcho"
-              fail "can't add #{write_rule(name, [cho[1], val])} ...to... #{write_rule(name, old)}" if CHOICERULES.include?(old[0])
-              [cho[0], old, val] # old might need to be packaged for gcho
-            end
-          else
-            if cho
-              if val[0] == cho[0]
-                [cho[1], *val[1..-1]]
-              else
-                [cho[1], val]
-              end
-            else
-              val
-            end
-          end
-        if name[0..1] == "$$"
-          check_socket(name, nv, "gadd", "tadd", "tcho", "type", "group")
-        elsif name[0] == "$"
-          check_socket(name, nv, "tadd", "gadd", "gcho", "group", "type")
-        end
+        merge_to_rule(name, val, cho)
       end
       # warn "** rules #{rules.inspect}"
     end

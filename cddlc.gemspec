@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = "cddlc"
-  s.version = "0.3.2"
+  s.version = "0.3.3"
   s.summary = "CDDL (Concise Data Definition Language) converters and miscellaneous tools"
   s.description = %q{cddlc implements converters and miscellaneous tools for CDDL, RFC 8610}
   s.author = "Carsten Bormann"

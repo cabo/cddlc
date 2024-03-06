@@ -10,7 +10,7 @@ def named_keys(tree)
   # warn [:T, tree].inspect
   fail unless Array === tree
   case tree[0]
-  when "seq", "gcho", "tcho"
+  when "seq", "gcho", "gadd", "tcho", "tadd"
     tree[1..-1].flat_map {|x| named_keys(x)}
   when "rep"
     named_keys(tree[3])
@@ -95,7 +95,7 @@ end
 
 cddl_file = ""
 if $options.start
-  cddl_file << "$.start.$ = #{$options.start}\n"
+  cddl_file << "@.start.@ = #{$options.start}\n"
 end
 if m = $options.model
   cddl_file << m << "\n"

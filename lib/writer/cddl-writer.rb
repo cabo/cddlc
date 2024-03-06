@@ -41,9 +41,9 @@ class CDDL
       [4, id]
     in ["gen", id, *parms]  # oops -- namep vs. namea; ouch
       [4, "#{id}<#{parms.map{write_rhs(_1, 2, indent, pn)}.join(", ")}>"]
-    in ["tcho", *types]
+    in ["tcho" | "tadd", *types]
       [2.1, types.map{write_rhs(_1, 3, indent, pn)}.join(" / ")]
-    in ["gcho", *groups]
+    in ["gcho" | "gadd", *groups]
       [0, groups.map{write_rhs(_1, 2, indent, pn)}.join(" // ")]
     in ["op", op, l, r]
       [3, "#{write_rhs(l, 4, indent, pn)} #{op} #{write_rhs(r, 4, indent, pn)}"]
@@ -117,10 +117,8 @@ class CDDL
       case v
       in ["tadd", *rest]
         assign = "/="
-        v = ["tcho", *rest]
       in ["gadd", *rest]
         assign = "//="
-        v = ["gcho", *rest]
       in ["parm", parmnames, _type]
       else
       end
