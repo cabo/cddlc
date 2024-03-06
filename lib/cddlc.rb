@@ -1,6 +1,7 @@
 require_relative "parser/cddl-util.rb"
 require_relative "processor/cddl-visitor.rb"
 require_relative 'processor/cddl-undefined.rb'
+require_relative 'writer/cddl-writer.rb'
 
 class CDDL
   @@parser = CDDLGRAMMARParser.new
@@ -259,9 +260,9 @@ class CDDL
         else
           fail name
         end
-        @rules[name] =
+        @rules[name] = nv =
           if (old = @rules[name]) && old != val
-            fail "duplicate rule for name #{name} #{old.inspect} #{val.inspect}" unless cho
+            fail "overwriting #{write_rule(name, old)} ...with... #{write_rule(name, val)}" unless cho
             if Array === old && cho.include?(old[0])
               if cho.include?(val[0])
                 old.dup.append(*val[1..-1])
@@ -270,7 +271,7 @@ class CDDL
               end
             else
               #  can't put an old "g/tadd" into a new "t/gcho"
-              fail "can't add #{[cho[1], val]} to #{old}" if CHOICERULES.include?(old[0])
+              fail "can't add #{write_rule(name, [cho[1], val])} ...to... #{write_rule(name, old)}" if CHOICERULES.include?(old[0])
               [cho[0], old, val] # old might need to be packaged for gcho
             end
           else
@@ -284,16 +285,31 @@ class CDDL
               val
             end
           end
+        if name[0..1] == "$$"
+          check_socket(name, nv, "gadd", "tadd", "tcho", "type", "group")
+        elsif name[0] == "$"
+          check_socket(name, nv, "tadd", "gadd", "gcho", "group", "type")
+        end
       end
       # warn "** rules #{rules.inspect}"
     end
     @rules
   end
 
+  def check_socket(name, nv, right, wrong, wrong_plain, wrong_kind, kind)
+    unless nv[0] == right
+      if nv[0] == wrong
+        flaw = "#{wrong_kind} choice #{write_rhs([wrong_plain, *nv[1..-1]], 2.1)} in"
+      else
+        flaw = "plain assignment of #{write_rhs(nv, 2.1)} to"
+      end
+      warn "** warning: #{flaw} #{kind} socket #{name}"
+    end
+  end
+
   def prelude
     if @prelude.nil?
       @prelude = CDDL.from_cddl(File.read(DATA_DIR + "prelude.cddl"))
-
     end
     @prelude
   end
