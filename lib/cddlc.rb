@@ -226,7 +226,8 @@ class CDDL
   end
 
 
-  RULE_OP_TO_CHOICE = {"/=" => "tcho", "//=" => "gcho"}
+  RULE_OP_TO_CHOICE = {"/=" => ["tcho", "tadd"], "//=" => ["gcho", "gadd"]}
+  CHOICERULES = RULE_OP_TO_CHOICE.values.flatten
 
   def rules
     if @rules.nil?              # memoize
@@ -261,13 +262,23 @@ class CDDL
         @rules[name] =
           if (old = @rules[name]) && old != val
             fail "duplicate rule for name #{name} #{old.inspect} #{val.inspect}" unless cho
-            if Array === old && old[0] == cho
+            if Array === old && cho.include?(old[0])
               old.dup << val
             else
-              [cho, old, val]
+              #  can't put an old "g/tadd" into a new "t/gcho"
+              fail "can't add #{[cho[1], val]} to #{old}" if CHOICERULES.include?(old[0])
+              [cho[0], old, val] # old might need to be packaged for gcho
             end
           else
-            val
+            if cho
+              if val[0] == cho[0]
+                [cho[1], *val[1..-1]]
+              else
+                [cho[1], val]
+              end
+            else
+              val
+            end
           end
       end
       # warn "** rules #{rules.inspect}"
