@@ -263,7 +263,11 @@ class CDDL
           if (old = @rules[name]) && old != val
             fail "duplicate rule for name #{name} #{old.inspect} #{val.inspect}" unless cho
             if Array === old && cho.include?(old[0])
-              old.dup << val
+              if cho.include?(val[0])
+                old.dup.append(*val[1..-1])
+              else
+                old.dup << val
+              end
             else
               #  can't put an old "g/tadd" into a new "t/gcho"
               fail "can't add #{[cho[1], val]} to #{old}" if CHOICERULES.include?(old[0])
