@@ -44,7 +44,7 @@ require 'ostruct'
 $options = OpenStruct.new
 begin
   op = OptionParser.new do |opts|
-    opts.banner = "Usage: cddlc.rb [options] [file.cddl... | -]"
+    opts.banner = "Usage: cddlc.rb [options] [-e cddl | file.cddl... | -]"
 
     opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
       $options.verbose = v
@@ -70,6 +70,9 @@ begin
     opts.on("-sRULE", "--start=RULE", String, "Start rule name") do |v|
       $options.start = v
     end
+    opts.on("-eCDDL", "CDDL model on command line") do |v|
+      $options.model = v
+    end
     opts.on("-iIMPORT", "--import=IMPORT", String, "Import [namespace=]reference") do |v|
       $options.import ||= []
       $options.import << v
@@ -93,6 +96,9 @@ end
 cddl_file = ""
 if $options.start
   cddl_file << "$.start.$ = #{$options.start}\n"
+end
+if m = $options.model
+  cddl_file << m << "\n"
 end
 
 [[$options.include, "include"], [$options.import, "import"]].each do |arr, directive|
