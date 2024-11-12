@@ -1,0 +1,118 @@
+Etime = #6.1001(etime-detailed)
+
+etime-framework = {
+  uint => any ; at least one base time
+  * (nint/text) => any ; elective supplementary information
+  * uint => any ; critical supplementary information
+}
+
+etime-detailed = ({
+  $$ETIME-BASETIME
+  ClockQuality-group
+  * $$ETIME-ELECTIVE
+  * $$ETIME-CRITICAL
+  * ((nint/text) .feature "etime-elective-extension") => any
+  * (uint .feature "etime-critical-extension") => any
+}) .within etime-framework
+
+
+$$ETIME-BASETIME //= (1: ~time)
+
+
+$$ETIME-BASETIME //= (4: ~decfrac)
+$$ETIME-BASETIME //= (5: ~bigfloat)
+
+
+$$ETIME-ELECTIVE //= (-3: uint)
+$$ETIME-ELECTIVE //= (-6: uint)
+$$ETIME-ELECTIVE //= (-9: uint)
+$$ETIME-ELECTIVE //= (-12: uint)
+$$ETIME-ELECTIVE //= (-15: uint)
+$$ETIME-ELECTIVE //= (-18: uint)
+
+
+$$ETIME-ELECTIVE //= (-1 => $ETIME-TIMESCALE)
+$$ETIME-ELECTIVE //= (-13 => $ETIME-TIMESCALE)
+$$ETIME-CRITICAL //= (13 => $ETIME-TIMESCALE)
+
+$ETIME-TIMESCALE /= &(etime-utc: 0)
+$ETIME-TIMESCALE /= &(etime-tai: 1)
+
+
+ClockQuality-group = (
+  ? &(ClockClass: -2) => uint .size 1 ; PTP/RFC8575
+  ? &(ClockAccuracy: -4) => uint .size 1 ; PTP/RFC8575
+  ? &(OffsetScaledLogVariance: -5) => uint .size 2 ; PTP/RFC8575
+  ? &(Uncertainty: -7) => ~time/~duration
+  ? &(Guarantee: -8) => ~time/~duration
+)
+
+
+$$ETIME-ELECTIVE //= (-10: time-zone-info)
+$$ETIME-CRITICAL //= (10: time-zone-info)
+
+time-zone-info = tstr .abnf
+                 ("time-zone-name / time-numoffset" .det IXDTFtz)
+IXDTFtz = '
+   time-hour       = 2DIGIT  ; 00-23
+   time-minute     = 2DIGIT  ; 00-59
+   time-numoffset  = ("+" / "-") time-hour ":" time-minute
+
+
+
+   time-zone-initial = ALPHA / "." / "_"
+   time-zone-char    = time-zone-initial / DIGIT / "-" / "+"
+   time-zone-part    = time-zone-initial *time-zone-char
+                       ; but not "." or ".."
+   time-zone-name    = time-zone-part *("/" time-zone-part)
+   ALPHA             =  %x41-5A / %x61-7A   ; A-Z / a-z
+   DIGIT             =  %x30-39 ; 0-9
+' ; extracted from [RFC9557] and [RFC3339]
+
+
+$$ETIME-ELECTIVE //= (-11: suffix-info-map)
+$$ETIME-CRITICAL //= (11: suffix-info-map)
+
+suffix-info-map = { * suffix-key => suffix-values }
+suffix-key = tstr .abnf ("suffix-key" .det IXDTF)
+suffix-values = one-or-more<suffix-value>
+one-or-more<T> = T / [ 2* T ]
+suffix-value = tstr .abnf ("suffix-value" .det IXDTF)
+
+IXDTF = '
+   key-initial       = lcalpha / "_"
+   key-char          = key-initial / DIGIT / "-"
+   suffix-key        = key-initial *key-char
+
+   suffix-value      = 1*alphanum
+   alphanum          = ALPHA / DIGIT
+   lcalpha           =  %x61-7A
+   ALPHA             =  %x41-5A / %x61-7A   ; A-Z / a-z
+   DIGIT             =  %x30-39 ; 0-9
+' ; extracted from [RFC9557]
+
+
+Duration = #6.1002(etime-detailed)
+
+
+simple-Period = #6.1003([
+  start: ~Etime / null
+  end: ~Etime / null
+  ? duration: ~Duration
+])
+
+
+Period = #6.1003([
+  (start: ~Etime,
+   ((end: ~Etime) //
+    (end: null,
+     duration: ~Duration))) //
+  (start: null,
+   end: ~Etime,
+   duration: ~Duration)
+])
+
+
+etime = #6.1001({* (int/tstr) => any})
+duration = #6.1002({* (int/tstr) => any})
+period = #6.1003([~etime/null, ~etime/null, ?~duration])
