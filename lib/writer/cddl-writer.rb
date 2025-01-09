@@ -2,6 +2,32 @@ require_relative "../cddlc.rb"
 
 class CDDL
 
+  # In each specific case, use the appropriate subset
+  ESCAPED_STRING_MAPPINGS = Hash[[
+                                   ["\x08", "b"],
+                                   ["\x09", "t"],
+                                   ["\x0A", "n"],
+                                   ["\x0C", "f"],
+                                   ["\x0D", "r"],
+                                   ["\x22", "\""],
+                                   ["\x27", "'"],
+                                   ["\x2F", "/"],
+                                   ["\x5C", "\\"],
+                                 ]]
+
+  # TODO: Enable selecting Unicode-friendly variants
+  def escape_string(s)
+    s.gsub(/[^\n !#-\[\]-~]/) {|ch|
+      if m = ESCAPED_STRING_MAPPINGS[ch]
+        "\\#{m}"
+      elsif (o = ch.ord) < 0x10000
+        "\\u#{"%04x" % o}"
+      else
+        "\\u{#{"%x" % o}}"
+      end
+    }
+  end
+
   def write_lhs(k, parmnames)
     if parmnames
       "#{k}<#{parmnames.join(", ")}>"
@@ -104,7 +130,7 @@ class CDDL
     in ["bytes", t]
       [4, t]                    # XXX not very clean
     in ["text", t]
-      [4, "\"#{t}\""]           # XXX escape
+      [4, "\"#{escape_string(t)}\""]
     in ["number", t]
       [4, t.to_s]
     end
