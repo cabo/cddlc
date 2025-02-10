@@ -1,0 +1,59 @@
+suites = [ 2* int ] / int
+
+ead = (
+  ead_label : int,
+  ? ead_value : bstr,
+)
+
+EAD_1 = (1* ead)
+EAD_2 = (1* ead)
+EAD_3 = (1* ead)
+EAD_4 = (1* ead)
+
+message_1 = (
+  METHOD : int,
+  SUITES_I : suites,
+  G_X : bstr,
+  C_I : bstr / -24..23,
+  ? EAD_1,
+)
+
+message_2 = (
+  G_Y_CIPHERTEXT_2 : bstr,
+)
+
+PLAINTEXT_2 = (
+  C_R : bstr / -24..23,
+  ID_CRED_R : header_map / bstr / -24..23,
+  Signature_or_MAC_2 : bstr,
+  ? EAD_2,
+)
+
+message_3 = (
+  CIPHERTEXT_3 : bstr,
+)
+
+PLAINTEXT_3 = (
+  ID_CRED_I : header_map / bstr / -24..23,
+  Signature_or_MAC_3 : bstr,
+  ? EAD_3,
+)
+
+message_4 = (
+  CIPHERTEXT_4 : bstr,
+)
+
+PLAINTEXT_4 = (
+  ? EAD_4,
+)
+
+error = (
+  ERR_CODE : int,
+  ERR_INFO : any,
+)
+
+info = (
+  info_label : int,
+  context : bstr,
+  length : uint,
+)

@@ -1,0 +1,8 @@
+a = text .size (3..5)
+
+;;+ "abc"
+;;+ "abcde"
+;;- "ab"
+;;- "abcdef"
+;;- 0
+;;- h''

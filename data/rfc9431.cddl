@@ -1,0 +1,5 @@
+ AIF-MQTT = AIF-Generic<mqtt-topic-filter, mqtt-permissions>
+ AIF-Generic<Toid, Tperm> = [* [Toid, Tperm]]
+ mqtt-topic-filter = tstr ; as per Section 4.7 of MQTT v5.0
+ mqtt-permissions = [+permission]
+ permission = "pub"/"sub"

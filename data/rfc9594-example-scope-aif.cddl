@@ -1,0 +1,16 @@
+;# include rfc9237
+
+gname = tstr
+
+permissions = uint .bits roles
+
+roles = &(
+   Requester: 1,
+   Responder: 2,
+   Monitor: 3,
+   Verifier: 4
+)
+
+scope_entries = AIF-Generic<gname, permissions>
+
+scope = bstr .cbor scope_entries

@@ -17,3 +17,16 @@ file "lib/parser/cddlgrammar.treetop" => "lib/parser/cddlgrammar.abnftt" do
   sh "diff lib/parser/cddlgrammar.abnf lib/parser/cddl.abnf.orig"
 end
 
+task :test do
+  files = Dir["test/*.cddl"].map {|fn| [fn, File.stat(fn).mtime]}.sort_by{|fn, mtime| -mtime.to_i}
+  files.each do |fn, _mtime|
+    sh "CDDLC_DEBUG= cddlc --test #{fn}"
+  end
+end
+
+task :testlog do
+  files = Dir["test/*.cddl"]
+  files.each do |fn|
+    sh "CDDLC_DEBUG= cddlc --test #{fn}"
+  end
+end

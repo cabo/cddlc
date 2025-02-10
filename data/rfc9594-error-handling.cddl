@@ -1,0 +1,3 @@
+   ace-groupcomm-error = {
+     &(error-id: 0) => int
+   }

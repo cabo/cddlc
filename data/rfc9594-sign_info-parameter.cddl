@@ -1,0 +1,18 @@
+sign_info = sign_info_req / sign_info_resp
+
+sign_info_req  = null                  ; in the Token Transfer
+                                       ; Request to the KDC
+
+sign_info_resp = [+ sign_info_entry]   ; in the Token Transfer
+                                       ; Response from the KDC
+
+sign_info_entry =
+[
+ id: gname / [+ gname],
+ sign_alg: int / tstr,
+ sign_parameters: [any],
+ sign_key_parameters: [+ parameter: any],
+ cred_fmt: int / null
+]
+
+gname = tstr

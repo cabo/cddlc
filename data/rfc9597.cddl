@@ -1,0 +1,5 @@
+CWT-Claims = {
+ * Claim-Label => any
+}
+
+Claim-Label = int / text

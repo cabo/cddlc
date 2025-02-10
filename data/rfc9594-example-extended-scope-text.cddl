@@ -1,0 +1,13 @@
+gname = tstr
+
+role = tstr
+
+scope_entry = [ gname , ? ( role / [ 2*role ] ) ]
+
+scope_entries = [ * scope_entry ]
+
+scope = bstr .cbor scope_entries
+
+extended_scope = #6.<TAG_FOR_THIS_SEMANTICS>(scope)
+
+TAG_FOR_THIS_SEMANTICS = uint

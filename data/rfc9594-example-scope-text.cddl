@@ -1,0 +1,9 @@
+gname = tstr
+
+role = tstr
+
+scope_entry = [gname, ? ( role / [2* role] )]
+
+scope_entries = [* scope_entry]
+
+scope = bstr .cbor scope_entries

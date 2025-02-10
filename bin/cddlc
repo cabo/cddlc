@@ -44,7 +44,7 @@ require 'ostruct'
 $options = OpenStruct.new
 begin
   op = OptionParser.new do |opts|
-    opts.banner = "Usage: cddlc.rb [options] [-e cddl | file.cddl... | -]"
+    opts.banner = "Usage: cddlc [options] [-e cddl | file.cddl... | -]"
 
     opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
       $options.verbose = v
@@ -64,7 +64,23 @@ begin
     opts.on("-2", "--[no-]cddl2", "Perform some CDDL 2.0 processing") do |v|
       $options.cddl2 = v
     end
-    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :const, :enum, :cddl], "Target format") do |v|
+    opts.on("-c", "--cbor-validate=FILE", "Validate CBOR file against CDDL grammar") do |v|
+      $options.validate = v
+      $options.source_format = :cbor
+    end
+    opts.on("-j", "--json-validate=FILE", "Validate JSON file against CDDL grammar") do |v|
+      $options.validate = v
+      $options.source_format = :json
+    end
+    opts.on("-d", "--diag-validate=FILE", "Validate EDN file against CDDL grammar") do |v|
+      $options.validate = v
+      $options.source_format = :diag
+    end
+    opts.on("--test", "Validate embedded EDN against CDDL grammar") do |v|
+      $options.validate = v
+      $options.source_format = :embedded
+    end
+    opts.on("-tFMT", "--to=FMT", [:basic, :neat, :json, :yaml, :const, :enum, :cddl, :diag, :edn, :cbor], "Target format") do |v|
       $options.target = v
     end
     opts.on("-sRULE", "--start=RULE", String, "Start rule name") do |v|
@@ -72,6 +88,9 @@ begin
     end
     opts.on("-eCDDL", "CDDL model on command line") do |v|
       $options.model = v
+    end
+    opts.on("--[no-]prelude", "Add (default)/do not add prelude") do |v|
+      $options.prelude = v
     end
     opts.on("-iIMPORT", "--import=IMPORT", String, "Import [namespace=]reference") do |v|
       $options.import ||= []
@@ -83,10 +102,12 @@ begin
     end
   end
   op.parse!
-rescue Exception => e
+rescue StandardError => e
   warn e
   exit 1
 end
+
+$options.prelude = true if $options.validate # XXX
 
 if ($options.expand_generics || $options.flattening) && !$options.rules
   warn "** can't expand or flatten in tree; adding -r flag"
@@ -131,8 +152,16 @@ else
   cddl_file << ARGF.read
 end
 
+if $options.validate
+  $options.expand_generics = true # for now
+  $options.rules = true
+  # manually select -f/--flattening if desired
+end
 
 cddl = CDDL.from_cddl(cddl_file)
+if $options.prelude
+  cddl.rules.merge! cddl.prelude.rules
+end
 result = if $options.rules
            if $options.expand_generics
              require_relative "../lib/processor/cddl-expander.rb"
@@ -149,6 +178,77 @@ result = if $options.rules
          end
 
 warn "** can't note undefined for target != cddl" if $options.note_undefined && $options.target != :cddl
+
+embedded = $options.source_format == :embedded
+
+def parse_diag(data)
+  require 'cbor-diag-parser'
+  parser = CBOR_DIAGParser.new
+  if result = parser.parse(data)
+    result.to_rb
+  else
+    warn "*** can't parse #{data}"
+    warn "*** #{parser.failure_reason}"
+    exit 1
+  end
+end
+
+if fn = $options.validate
+  require "cbor-pure"
+  require "validator/validate"
+  data = fn == "-" ? STDIN.read : File.binread(fn) unless embedded
+  items = case $options.source_format
+         in :cbor
+           [[CBOR.decode(data), true]]
+         in :json
+           [[JSON.load(data), true]]
+         in :diag                      # XXX move to EDN, take diag2x options
+           [[parse_diag(data), true]]
+         in :embedded
+           input = cddl_file.lines(chomp: true)
+           tests = []
+           input.each do |l|
+             case l
+             when /\A;;([-+:]p?)\s*(.*)\z/
+               disc = $1
+               payload = $2
+               if disc == ':'
+                 if t = tests[-1]
+                   t[1] << payload
+                 else
+                   warn "*** : to what? #{l}"
+                 end
+               else
+                 tests << [disc, [payload]]
+               end
+             end
+           end
+           tests.map {|disc, lines|
+             [parse_diag(lines.join("\n")), disc == "+"]
+           }
+         else
+           fail $options.source_format
+          end
+  items.each do |item, expected|
+    warn [:ITEM, item, expected].inspect if CDDL::CDDLC_DEBUG
+    r = cddl.validate(item)
+    if r[0]
+      # TODO: build annotated output here!
+      warn r.inspect
+      if !expected
+        warn "*** should NOT have validated"
+        exit 1
+      end
+    else
+      puts r.to_yaml
+      if expected
+        warn "*** should have validated" if embedded
+        exit 1
+      end
+    end
+  end
+  exit
+end
 
 case $options.target
 when :basic, nil
@@ -189,5 +289,5 @@ when :cddl
   end
   puts cddl.to_s
 else
-  warn ["Unknown target format: ", $options.target].inspect
+  warn ["Unknown target format for CDDL output: ", $options.target].inspect
 end

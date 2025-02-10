@@ -1,0 +1,2 @@
+COSE_X509 = bstr / [ 2*certs: bstr ]
+COSE_CertHash = [ hashAlg: (int / tstr), hashValue: bstr ]

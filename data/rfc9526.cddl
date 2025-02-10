@@ -1,0 +1,12 @@
+hna-configuration = {
+  "registered_domain" : tstr,
+  "dm"                : tstr,
+  ? "dm_transport" : "DoT"
+  ? "dm_port"        : uint,
+  ? "dm_acl"         : hna-acl / [ +hna-acl ]
+  ? "hna_auth_method": hna-auth-method
+  ? "hna_certificate": tstr
+}
+
+hna-acl          = tstr
+hna-auth-method  /= "certificate"

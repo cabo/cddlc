@@ -1,0 +1,10 @@
+inclusion_flag = bool
+
+role = tstr
+comb_role = [2* role]
+role_filter = [* ( role / comb_role )]
+
+id = bstr
+id_filter = [* id]
+
+get_creds = null / [inclusion_flag, role_filter, id_filter]
