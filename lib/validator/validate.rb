@@ -28,6 +28,34 @@ class CDDL
   CDDLC_INVENT = ENV["CDDLC_INVENT"]
   CDDLC_DEBUG = ENV["CDDLC_DEBUG"]
 
+  FEATURE_REJECT_RE = /\A\^/
+  # CDDLC_FEATURE_OK=cbor,^json
+  CDDLC_FEATURE_OK, CDDLC_FEATURE_REJECT =
+                   if ok = ENV["CDDLC_FEATURE_OK"]
+                     ok.split(/,\s*/)
+                       .partition{|s| s[0] !~ FEATURE_REJECT_RE}
+                       .map {|l| Hash[l.map {|feature|
+                                        [feature.sub(FEATURE_REJECT_RE, ''),
+                                         true]}]}
+                   else
+                     [{}, {}]
+                   end
+
+  REGEXP_FOR_STRING = Hash.new {|h, k|
+    h[k] = Regexp.new("\\A(?:#{k})\\z")
+  }
+
+  ABNF_PARSER_FOR_STRING = Hash.new {|h, k|
+    grammar = "cddl-t0p--1eve1-f0r--abnf = " << k # XXX
+    h[k] = ABNF.from_abnf(grammar)
+  }
+
+  ABNF_ENCODING_FOR_CONOP = {
+    ".abnf" => Encoding::UTF_8,
+    ".abnfb" => Encoding::BINARY
+  }
+
+
   # library:
 
   def remove_indentation(s)
@@ -185,47 +213,14 @@ class CDDL
               item, where, :out_of_range)
           end
         end
-      in ".cat" | ".det"
-        lhss, lhsv, lhst = extract_value(lhs)
-        rhss, rhsv, rhst = extract_value(rhs)
-        if !lhss || !rhss
-          [false, item, {UNSPECIFIC_STRING_CAT: [op, lhs, rhs]}, []]
-        elsif [lhsv, rhsv].any? {!(String === _1)}
-          [false, item, {NON_STRING_CAT: [op, lhs, rhs]}, []]
+      in ".cat" | ".det" | ".plus"
+        s, v, t = extract_value(where)
+        pp [:CAT_DET_PLUS, s, v, t, item, scalar_type(item)] if CDDLC_DEBUG
+        if s
+          simple_result(s && scalar_type(item) == t && item == v,
+                      item, where, :no_match)
         else
-          if op == ".det"
-            lhsv = remove_indentation(lhsv)
-            rhsv = remove_indentation(rhsv)
-          end
-          case [lhst, rhst]
-          in [:text, :text] | [:bytes, :bytes]
-            result = lhsv + rhsv
-          in [:bytes, :text]
-            result = (lhsv + rhsv.b).b
-          in [:text, :bytes]
-              result = lhsv + rhsv.force_encoding(Encoding::UTF_8)
-              unless result.valid_encoding?
-                return [false, item, {text_encoding_error: [lhst, lhsv, rhst, rhsv]}, []]
-              end
-          end
-          simple_result(scalar_type(item) == lhst && item == result,
-                        item, where, :no_match)
-        end
-      in ".plus"
-        lhss, lhsv, lhst = extract_value(lhs)
-        rhss, rhsv, rhst = extract_value(rhs)
-        if !lhss || !rhss
-          [false, item, {UNSPECIFIC_PLUS: [op, lhs, rhs]}, []]
-        elsif [lhsv, rhsv].any? {!(Numeric === _1)}
-          [false, item, {NON_NUMERIC_PLUS: [op, lhs, rhs]}, []]
-        else
-          if lhst == :int
-            result = lhsv + Integer(rhsv)
-          elsif lhst == :float
-            result = rbv + rhsv
-          end
-          simple_result(item.eql?(result),
-                        item, where, :no_match)
+          [false, item, v, []]
         end
       in ".size"
         anno = :lhs
@@ -245,6 +240,7 @@ class CDDL
           end
         end
       in ".bits"
+        anno = :lhs
         r = validate1(item, lhs)
         if r[0]
             if String === item
@@ -272,6 +268,60 @@ class CDDL
               end
             end
         end
+      in ".default"
+        # anno = :lhs
+        r = validate1(item, lhs)
+        # TO DO
+        unless @default_warned
+          warn "*** Ignoring .default for now."
+          @default_warned = true
+        end
+        r
+      in ".feature"
+        r = validate1(item, lhs)
+        if r[0]
+          nm, det = extract_feature(rhs, d)
+          if CDDLC_FEATURE_REJECT[nm]
+            [false, item, {:rejected_feature => [nm, det]}, []]
+          else
+            [true, item, {:accepted_feature => [nm, det]}, []]
+          end
+        end
+
+      in ".regexp"
+        anno = :lhs
+        r = validate1(item, lhs)
+        if r[0]
+          if String === item
+              ok, v, vt = extract_value(rhs)
+              if ok && :text == vt
+                re = REGEXP_FOR_STRING[v]
+                # pp re if CDDLC_DEBUG
+                simple_result(item.match(re),
+                              item, where, :regexp_not_matched)
+              end
+          end
+        end
+      in ".abnf" | ".abnfb"
+        anno = :lhs
+        r = validate1(item, lhs)
+        if r[0]
+            if String === item
+              ok, v, vt = extract_value(rhs)
+              # pp [:abnfex, rhs, ok, v, vt] if CDDLC_DEBUG
+              if ok && (:text == vt || :bytes == vt)
+                begin
+                  ABNF_PARSER_FOR_STRING[v].validate(
+                    item.dup.force_encoding(ABNF_ENCODING_FOR_CONOP[op]).codepoints.pack("U*"))
+                  [true, item, {abnf: [v]}, [r]]
+                rescue => e
+                  # warn "*** #{e}" # XXX
+                  [false, item, {abnf_not_matched: [v, e.to_s.force_encoding(Encoding::UTF_8)] }, [r]]
+                end
+              end
+            end
+        end
+
       else
         fail [:CONTROL_UNIMPLEMENTED, op, item, where].inspect
       end
@@ -280,7 +330,6 @@ class CDDL
       exit 1
     end || [false, item, {anno => [item, where]}, []]
   end
-end
 
 def scalar_type(item)
   case item
@@ -327,7 +376,27 @@ def biggify(d)                  # stand-in for real stand-ins
   CBOR::Tagged.new(t, d == 0 ? "".b : d.digits(256).reverse!.pack("C*"))
 end
 
-def extract_value(wh)           # XXX complete: .cat/plus/det
+def extract_bytes(bsqual, bsval)
+  if bsqual == ""
+    bsval.b
+  else
+    bsclean = bsval.gsub(/\s/, "")
+    case bsqual
+    in /\Ah\z/i
+      bsclean.chars.each_slice(2).map{ |x| Integer(x.join, 16).chr("BINARY") }.join.b
+    in /\Ab64\z/i
+      begin
+        Base64.urlsafe_decode64(bsclean)
+      rescue ArgumentError => e
+        {base64_error: [bsclean, e.to_s]}
+      end
+    else
+      warn "*** Can't handle byte string type #{bsqual.inspect} yet"
+    end
+  end
+end
+
+def extract_value(wh)
   case wh
   in x if a = SIMPLE_VALUE[x]
     SIMPLE_VALUE[x]
@@ -335,9 +404,86 @@ def extract_value(wh)           # XXX complete: .cat/plus/det
     [true, Integer(num), :int] rescue [true, Float(num), :float]
   in ["text", val]
     [true, val, :text]
-  in ["bytes", val]             # TODO
-    [true, val, :bytes]
+  in ["bytes", val, _orig]
+    eb = extract_bytes(*val)
+    if String === eb
+      [true, extract_bytes(*val), :bytes]
+    else
+      [false, eb]
+    end
+  in ["op", ".cat" | ".det" | ".plus", lhs, rhs]
+    op = wh[1]
+    expected_type = op == ".plus" ? Numeric : String;
+    lhss, lhsv, lhst = extract_value(lhs)
+    rhss, rhsv, rhst = extract_value(rhs)
+    if !lhss || !rhss
+      [false, {%i'UNSPECIFIC_#{op}' => [op, lhs, rhs]}]
+    elsif [lhsv, rhsv].any? {!(expected_type === _1)}
+      [false, {%i'BAD_TYPES_#{op}' => [op, lhs, rhs]}]
+    else
+      if op == ".det"
+        lhsv = remove_indentation(lhsv)
+        rhsv = remove_indentation(rhsv)
+      end
+      case [lhst, rhst]
+      in [:text, :text] | [:bytes, :bytes]
+        [true, lhsv + rhsv]
+      in [:bytes, :text]
+        [true, (lhsv + rhsv.b).b]
+      in [:text, :bytes]
+        result = lhsv + rhsv.force_encoding(Encoding::UTF_8)
+        if result.valid_encoding?
+          [true, result]
+        else
+          [false, {text_encoding_not_utf8: [lhst, lhsv, rhst, rhsv]}]
+        end
+      in [:int, _]
+        [true, lhsv + Integer(rhsv)]
+      in [:float, _]
+        [true, lhsv + rhsv]
+      end << lhst
+    end
   else
     [false]
   end
+end
+
+def extract_array(t)
+  case t
+  in ["ary", ["seq", *members]]
+  else
+    return [false]
+  end
+  [true, *members.map { |el|
+     case el
+     in ["mem", _cut, _any, el4]
+       ok, v, vt = extract_value(el4)
+       return [false] unless ok
+       [v, vt]
+     else
+       return [false]
+     end
+   }]
+end
+
+
+def extract_feature(control, d)
+  ok, v, vt = extract_value(control)
+  if ok
+    nm = v
+    det = d
+    warn "*** feature controller should be a string: #{control.inspect}" unless :text == vt || :bytes == vt
+  else
+    ok, *v = extract_array(control)
+    if ok && v.size == 2
+      nm = v[0][0]
+      det = v[1][0]
+      warn "*** first element of feature controller should be a string: #{control.inspect}" unless String === nm
+    else
+      warn "*** feature controller not implemented: #{control.inspect}"
+    end
+  end
+  [nm, det]
+end
+
 end

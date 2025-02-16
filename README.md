@@ -93,7 +93,8 @@ line).
 Limitations (i.e., why this is a preview at this very moment):
 
 * Only a small set of control operators have been ported over: `.cat`,
-  `.det`, `.plus`, `.size`, `.bits`.
+  `.det`, `.plus`, `.size`, `.bits`, `.default`, `.feature`,
+  `.regexp`, `.abnf`, `.abnfb`.
 * CDDL groups have not been ported over yet.
 
 The new validator collects information during validation.

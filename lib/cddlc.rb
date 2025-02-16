@@ -321,4 +321,51 @@ class CDDL
     end
     @prelude
   end
+
+  # In each specific case, use the appropriate subset
+  ESCAPED_STRING_MAPPINGS = Hash[[
+                                   ["\x08", "b"],
+                                   ["\x09", "t"],
+                                   ["\x0A", "n"],
+                                   ["\x0C", "f"],
+                                   ["\x0D", "r"],
+                                   ["\x22", "\""],
+                                   ["\x27", "'"],
+                                   ["\x2F", "/"],
+                                   ["\x5C", "\\"],
+                                 ]]
+
+  # TODO: Enable selecting Unicode-friendly variants
+  def escape_string(s, regexp = /[^\n !#-\[\]-~]/)
+    s.gsub(regexp) {|ch|
+      if m = ESCAPED_STRING_MAPPINGS[ch]
+        "\\#{m}"
+      elsif (o = ch.ord) < 0x10000
+        "\\u#{"%04x" % o}"
+      else
+        "\\u{#{"%x" % o}}"
+      end
+    }
+  end
+
+  def escape_byte_string(s)
+    escape_string(s, /[^\n -&(-\[\]-~]/)
+  end
+
+  def bytes_escaped(tesc, t)
+    if tesc.nil?
+      case t
+      in ["", text]
+        "'" + escape_byte_string(text)
+      in [/\Ah\z/i, text]
+        "h'" + escape_byte_string(text)
+      in [/\Ab64\z/i, text]
+        "b64'" + escape_byte_string(text)
+      # else error
+      end + "'"
+    else
+      tesc
+    end
+  end
+
 end

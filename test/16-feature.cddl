@@ -1,0 +1,6 @@
+test = uint .feature "ok" / float .feature "notok"
+;;+ 8
+;;+ 3 / Hmm /
+;;+ 16
+;;- -4
+;;- 4.0

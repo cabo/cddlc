@@ -1,0 +1,6 @@
+test = uint .feature ["ok", "fritz"] / float .feature ["notok", "gerd"]
+;;+ 8
+;;+ 3 / Hmm /
+;;+ 16
+;;- -4
+;;- 4.0

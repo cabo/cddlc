@@ -20,13 +20,13 @@ end
 task :test do
   files = Dir["test/*.cddl"].map {|fn| [fn, File.stat(fn).mtime]}.sort_by{|fn, mtime| -mtime.to_i}
   files.each do |fn, _mtime|
-    sh "CDDLC_DEBUG= cddlc --test #{fn}"
+    sh "CDDLC_DEBUG= CDDLC_FEATURE_OK=ok,^notok cddlc --test #{fn}"
   end
 end
 
 task :testlog do
   files = Dir["test/*.cddl"]
   files.each do |fn|
-    sh "CDDLC_DEBUG= cddlc --test #{fn}"
+    sh "CDDLC_FEATURE_OK=ok,^notok cddlc --test #{fn}"
   end
 end

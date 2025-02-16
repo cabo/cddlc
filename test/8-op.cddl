@@ -1,0 +1,4 @@
+a = text .regexp "foo"
+
+;;+ "foo"
+;;- "fool"
